@@ -2,8 +2,6 @@ package io.github.tastac.tools;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.Line2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -17,7 +15,7 @@ public class MapGenerator {
     public MapGenerator(){
         this.map = loadMapTexture();
         g2d = map.createGraphics();
-        //ALPHA g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
+        //ALPHA | g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
     }
 
     private BufferedImage loadMapTexture(){
@@ -79,12 +77,24 @@ public class MapGenerator {
         }
     }
 
-    public void drawRect(int x, int y, int width, int height, int color, boolean filled){
+    public void drawRect(int x, int y, int width, int height, int color, boolean filled, boolean centered){
         g2d.setColor(new Color(color));
+
+        int posX;
+        int posY;
+
+        if(centered){
+            posX = (int)(x - (float)(width/2) + xMapOffset);
+            posY = (int)(y - (float)(height/2) + yMapOffset);
+        }else {
+            posX = x + xMapOffset;
+            posY = y + yMapOffset;
+        }
+
         if(filled){
-            g2d.fillRect(x + xMapOffset, y + yMapOffset, width, height);
+            g2d.fillRect(posX, posY, width, height);
         }else{
-            g2d.drawRect(x + xMapOffset, y + yMapOffset, width, height);
+            g2d.drawRect(posX, posY, width, height);
         }
     }
 

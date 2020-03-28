@@ -1,6 +1,7 @@
-package io.github.tastac.api;
+package io.github.tastac.api.components;
 
 import com.sun.javafx.geom.Vec3d;
+import io.github.tastac.api.DataRetriever;
 
 public class BFKill {
 
@@ -27,15 +28,15 @@ public class BFKill {
     }
 
     public BFMatch getMatch() {
-        return BFDataRetriever.getMatchFromID(matchID);
+        return DataRetriever.getMatchFromID(matchID);
     }
 
     public BFPlayer getSourcePlayer() {
-        return BFDataRetriever.getPlayerByID(sourcePlayer);
+        return DataRetriever.getPlayerByID(sourcePlayer);
     }
 
     public BFPlayer getTargetPlayer() {
-        return BFDataRetriever.getPlayerByID(targetPlayer);
+        return DataRetriever.getPlayerByID(targetPlayer);
     }
 
     public Vec3d getSourcePos() {
@@ -47,6 +48,6 @@ public class BFKill {
     }
 
     public BFWeapon getWeapon() {
-        return BFDataRetriever.getWeaponByID(weaponID);
+        return DataRetriever.getWeaponByID(weaponID);
     }
 }

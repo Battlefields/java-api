@@ -1,9 +1,10 @@
 package io.github.tastac;
 
-import io.github.tastac.api.BFDataRetriever;
-import io.github.tastac.api.BFKill;
+import io.github.tastac.api.DataRetriever;
+import io.github.tastac.api.components.BFKill;
 import io.github.tastac.tools.MapGenerator;
 
+import javax.xml.crypto.Data;
 import java.awt.*;
 
 public class BFJ{
@@ -23,14 +24,18 @@ public class BFJ{
 
         Graphics2D g2d = mapGenerator.map.createGraphics();
 
-        System.out.println(BFDataRetriever.getMatchFromID(19).getWinningPlayer());
+        for(BFKill kill : DataRetriever.getKillsByBFPlayerSource(DataRetriever.getPlayerByUsername("Mesryn"))){
 
-        for(BFKill kill : BFDataRetriever.getKillsBySourceID(137)){
+            int
+                    sx = (int)kill.getSourcePos().x,
+                    sz = (int)kill.getSourcePos().z,
+                    ex = (int)kill.getTargetPos().x,
+                    ez = (int)kill.getTargetPos().z;
 
-            mapGenerator.drawLine((int)kill.getSourcePos().x,  (int)kill.getSourcePos().z, (int)kill.getTargetPos().x, (int)kill.getTargetPos().z, 0xFFFFFFFF);
+            mapGenerator.drawLine(sx, sz, ex, ez, 0xFF6060FF);
 
-            mapGenerator.drawOval((int)kill.getSourcePos().x, (int)kill.getSourcePos().z, 5, 5, 0xFF00FF00, true, true);
-            mapGenerator.drawOval((int)kill.getTargetPos().x, (int)kill.getTargetPos().z, 5, 5, 0xFFFF0000, true, true);
+            mapGenerator.drawOval(sx, sz, 5, 5, 0xFF00FF00, true, true);
+            mapGenerator.drawOval(ex, ez, 5, 5, 0xFFFF0000, true, true);
         }
 
         mapGenerator.outputMapPNG();

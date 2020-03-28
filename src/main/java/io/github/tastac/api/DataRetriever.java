@@ -5,6 +5,10 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.sun.javafx.geom.Vec3d;
+import io.github.tastac.api.components.BFKill;
+import io.github.tastac.api.components.BFMatch;
+import io.github.tastac.api.components.BFPlayer;
+import io.github.tastac.api.components.BFWeapon;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -19,19 +23,22 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class BFDataRetriever {
+public class DataRetriever {
 
     private static final CloseableHttpClient httpClient = HttpClients.createDefault();
     private static final String apiURL = "https://api.battlefieldsmc.net/api/?type=";
     private static final DateTimeFormatter matchDateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-    private static JsonElement getJSONFromTable(String table){ return requestFromURL(apiURL + table); }
-    private static JsonElement getJSONFromQuery(String table, String dataID, String query){ return requestFromURL(apiURL + table + "&" + dataID + "=" + query); }
+    //TODO add a map of previously retrieved players for quick access later (a cache) include expire timer
+
+    public static JsonElement getJSONFromRequestBuilder(RequestBuilder requestBuilder){ return requestFromURL(apiURL + requestBuilder.getString()); }
+    public static JsonElement getJSONFromQuery(String table, String dataID, String query){ return requestFromURL(apiURL + table + "&" + dataID + "=" + query); }
+    public static JsonElement getJSONFromTable(String table){ return requestFromURL(apiURL + table); }
 
     private static JsonElement requestFromURL(String url){
         HttpGet request = new HttpGet(url);
 
-        request.addHeader(HttpHeaders.USER_AGENT, "BFHeatmapper");
+        request.addHeader(HttpHeaders.USER_AGENT, "BFJ");
 
         try (CloseableHttpResponse response = httpClient.execute(request)) {
             HttpEntity entity = response.getEntity();
@@ -64,7 +71,7 @@ public class BFDataRetriever {
 
     // ########## KILLS ##########
 
-    private static BFKill[] getKillsFromJson(JsonArray killsJson){
+    public static BFKill[] getKillsFromJson(JsonArray killsJson){
         BFKill[] kills = new BFKill[killsJson.size()];
 
         for(int i = 0; i < killsJson.size(); i++){
@@ -93,7 +100,7 @@ public class BFDataRetriever {
 
     // ########## PLAYERS ##########
 
-    private static BFPlayer getPlayerFromJson(JsonObject playerJson){
+    public static BFPlayer getPlayerFromJson(JsonObject playerJson){
         try{
             return new BFPlayer(playerJson.get("id").getAsInt(), playerJson.get("uuid").getAsString(), playerJson.get("username").getAsString(), new SimpleDateFormat("yyyy-mm-dd").parse(playerJson.get("last_seen").getAsString()));
         }catch (ParseException e){ e.printStackTrace(); }
@@ -108,7 +115,7 @@ public class BFDataRetriever {
 
     // ########## MATCHES ##########
 
-    private static BFMatch[] getMatchesFromJson(JsonArray matchArrayJson){
+    public static BFMatch[] getMatchesFromJson(JsonArray matchArrayJson){
         BFMatch[] matches = new BFMatch[matchArrayJson.size()];
         for(int i = 0; i < matches.length; i++){
             JsonObject element = matchArrayJson.get(i).getAsJsonObject();
@@ -127,6 +134,37 @@ public class BFDataRetriever {
 
     public static BFMatch getMatchFromNumber(int number){ return getMatchesFromJson(getJSONFromQuery("cubg_match", "number", Integer.toString(number)).getAsJsonArray())[0]; }
 
-    public static BFMatch[] getMatchesFromWinningPlayer(int winningPlayerID){ return getMatchesFromJson(getJSONFromQuery("cubg_match", "winning_player_id", Integer.toString(winningPlayerID)).getAsJsonArray()); }
+    public static BFMatch[] getMatchesFromWinningPlayer(BFPlayer player){ return getMatchesFromJson(getJSONFromQuery("cubg_match", "winning_player_id", Integer.toString(player.getID())).getAsJsonArray()); }
+
+    // ########## PARTICIPANT MATCHES ##########
+
+    public static BFMatch[] getPMatchesFromJson(JsonArray pMatchArrayJson){
+        BFMatch[] matches = new BFMatch[pMatchArrayJson.size()];
+        for(int i = 0; i < matches.length; i++){
+            matches[i] = getMatchFromID(pMatchArrayJson.get(i).getAsJsonObject().get("match_id").getAsInt());
+        }
+        return matches;
+    }
+
+    private static BFPlayer[] getMPlayersFromJson(JsonArray mPlayerArrayJson){
+        BFPlayer[] players = new BFPlayer[mPlayerArrayJson.size()];
+        for(int i = 0; i < players.length; i++){
+            players[i] = getPlayerByID(mPlayerArrayJson.get(i).getAsJsonObject().get("player_id").getAsInt());
+        }
+        return players;
+    }
+
+    public static BFMatch[] getMatchesContainingPlayer(BFPlayer player){ return getMatchesFromJson(getJSONFromQuery("cubg_participants", "player_id", Integer.toString(player.getID())).getAsJsonArray()); }
+
+    public static BFMatch[] getPlayersInMatch(BFMatch match){ return getMatchesFromJson(getJSONFromQuery("cubg_participants", "match_id", Integer.toString(match.getID())).getAsJsonArray()); }
+
+    // ########## EXTRA ##########
+
+    public static BFKill[] getKillsOnPlayer(BFPlayer source, BFPlayer target){
+        return getKillsFromJson(getJSONFromRequestBuilder(new RequestBuilder("cubg_kills")
+                        .addSearchQuery("source_player", Integer.toString(source.getID()))
+                        .addSearchQuery("target_player", Integer.toString(target.getID())))
+                .getAsJsonArray());
+    }
 
 }
