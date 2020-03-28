@@ -1,4 +1,4 @@
-package io.github.tastac.tools;
+package io.github.tastac.bfj.tools;
 
 import javax.imageio.ImageIO;
 import java.awt.*;

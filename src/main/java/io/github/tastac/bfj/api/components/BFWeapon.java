@@ -1,4 +1,4 @@
-package io.github.tastac.api.components;
+package io.github.tastac.bfj.api.components;
 
 public class BFWeapon {
 

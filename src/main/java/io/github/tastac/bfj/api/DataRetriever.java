@@ -1,14 +1,14 @@
-package io.github.tastac.api;
+package io.github.tastac.bfj.api;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.sun.javafx.geom.Vec3d;
-import io.github.tastac.api.components.BFKill;
-import io.github.tastac.api.components.BFMatch;
-import io.github.tastac.api.components.BFPlayer;
-import io.github.tastac.api.components.BFWeapon;
+import io.github.tastac.bfj.api.components.BFKill;
+import io.github.tastac.bfj.api.components.BFMatch;
+import io.github.tastac.bfj.api.components.BFPlayer;
+import io.github.tastac.bfj.api.components.BFWeapon;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
 import org.apache.http.client.methods.CloseableHttpResponse;
