@@ -17,11 +17,16 @@ public class BFJ{
     }
 
     public void run(){
+        System.out.println("Start");
+
         MapGenerator mapGenerator = new MapGenerator();
 
         Graphics2D g2d = mapGenerator.map.createGraphics();
 
+        System.out.println(BFDataRetriever.getMatchFromID(19).getWinningPlayer());
+
         for(BFKill kill : BFDataRetriever.getKillsBySourceID(137)){
+
             mapGenerator.drawLine((int)kill.getSourcePos().x,  (int)kill.getSourcePos().z, (int)kill.getTargetPos().x, (int)kill.getTargetPos().z, 0xFFFFFFFF);
 
             mapGenerator.drawOval((int)kill.getSourcePos().x, (int)kill.getSourcePos().z, 5, 5, 0xFF00FF00, true, true);

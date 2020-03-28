@@ -26,9 +26,8 @@ public class BFKill {
         return ID;
     }
 
-    //TODO Change to return a BFMatch object
-    public int getMatchID() {
-        return matchID;
+    public BFMatch getMatch() {
+        return BFDataRetriever.getMatchFromID(matchID);
     }
 
     public BFPlayer getSourcePlayer() {

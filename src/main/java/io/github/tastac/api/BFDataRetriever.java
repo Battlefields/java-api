@@ -16,11 +16,14 @@ import org.apache.http.util.EntityUtils;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class BFDataRetriever {
 
     private static final CloseableHttpClient httpClient = HttpClients.createDefault();
     private static final String apiURL = "https://api.battlefieldsmc.net/api/?type=";
+    private static final DateTimeFormatter matchDateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     private static JsonElement getJSONFromTable(String table){ return requestFromURL(apiURL + table); }
     private static JsonElement getJSONFromQuery(String table, String dataID, String query){ return requestFromURL(apiURL + table + "&" + dataID + "=" + query); }
@@ -42,22 +45,22 @@ public class BFDataRetriever {
         return null;
     }
 
+    //TODO Add documentation to all of these methods
+
     // ########## WEAPONS ##########
 
-    public static BFWeapon getWeaponByID(int ID){
-        JsonObject weaponJson = getJSONFromQuery("cubg_weapons", "id", Integer.toString(ID)).getAsJsonArray().get(0).getAsJsonObject();
-        return new BFWeapon(weaponJson.get("id").getAsInt(), weaponJson.get("item_id").getAsInt(), weaponJson.get("item_name").getAsString());
+    private static BFWeapon getWeaponFromJson(JsonObject weaponJson){
+        return new BFWeapon(
+                weaponJson.get("id").getAsInt(),
+                weaponJson.get("item_id").getAsInt(),
+                weaponJson.get("item_name").getAsString());
     }
 
-    public static BFWeapon getWeaponByItemID(int itemID){
-        JsonObject weaponJson = getJSONFromQuery("cubg_weapons", "item_id", Integer.toString(itemID)).getAsJsonArray().get(0).getAsJsonObject();
-        return new BFWeapon(weaponJson.get("id").getAsInt(), weaponJson.get("item_id").getAsInt(), weaponJson.get("item_name").getAsString());
-    }
+    public static BFWeapon getWeaponByID(int ID){ return getWeaponFromJson(getJSONFromQuery("cubg_weapons", "id", Integer.toString(ID)).getAsJsonArray().get(0).getAsJsonObject()); }
 
-    public static BFWeapon getWeaponByItemName(String itemName){
-        JsonObject weaponJson = getJSONFromQuery("cubg_weapons", "item_name", itemName).getAsJsonArray().get(0).getAsJsonObject();
-        return new BFWeapon(weaponJson.get("id").getAsInt(), weaponJson.get("item_id").getAsInt(), weaponJson.get("item_name").getAsString());
-    }
+    public static BFWeapon getWeaponByItemID(int itemID){ return getWeaponFromJson(getJSONFromQuery("cubg_weapons", "item_id", Integer.toString(itemID)).getAsJsonArray().get(0).getAsJsonObject()); }
+
+    public static BFWeapon getWeaponByItemName(String itemName){ return getWeaponFromJson(getJSONFromQuery("cubg_weapons", "item_name", itemName).getAsJsonArray().get(0).getAsJsonObject()); }
 
     // ########## KILLS ##########
 
@@ -90,12 +93,40 @@ public class BFDataRetriever {
 
     // ########## PLAYERS ##########
 
-    public static BFPlayer getPlayerByID(int ID){
-        JsonObject playerJson = getJSONFromQuery("cubg_players", "id", Integer.toString(ID)).getAsJsonArray().get(0).getAsJsonObject();
+    private static BFPlayer getPlayerFromJson(JsonObject playerJson){
         try{
             return new BFPlayer(playerJson.get("id").getAsInt(), playerJson.get("uuid").getAsString(), playerJson.get("username").getAsString(), new SimpleDateFormat("yyyy-mm-dd").parse(playerJson.get("last_seen").getAsString()));
         }catch (ParseException e){ e.printStackTrace(); }
         return new BFPlayer(playerJson.get("id").getAsInt(), playerJson.get("uuid").getAsString(), playerJson.get("username").getAsString(), null);
     }
+
+    public static BFPlayer getPlayerByID(int ID){ return getPlayerFromJson(getJSONFromQuery("cubg_players", "id", Integer.toString(ID)).getAsJsonArray().get(0).getAsJsonObject()); }
+
+    public static BFPlayer getPlayerByUUID(String uuid){ return getPlayerFromJson(getJSONFromQuery("cubg_players", "uuid", uuid).getAsJsonArray().get(0).getAsJsonObject()); }
+
+    public static BFPlayer getPlayerByUsername(String username){ return getPlayerFromJson(getJSONFromQuery("cubg_players", "username", username).getAsJsonArray().get(0).getAsJsonObject()); }
+
+    // ########## MATCHES ##########
+
+    private static BFMatch[] getMatchesFromJson(JsonArray matchArrayJson){
+        BFMatch[] matches = new BFMatch[matchArrayJson.size()];
+        for(int i = 0; i < matches.length; i++){
+            JsonObject element = matchArrayJson.get(i).getAsJsonObject();
+            matches[i] = new BFMatch(
+                    element.get("id").getAsInt(),
+                    element.get("number").getAsInt(),
+                    LocalDateTime.parse(element.get("start_date").getAsString(), matchDateFormatter),
+                    LocalDateTime.parse(element.get("end_date").getAsString(), matchDateFormatter),
+                    element.get("winning_player_id").getAsInt()
+            );
+        }
+        return matches;
+    }
+
+    public static BFMatch getMatchFromID(int ID){ return getMatchesFromJson(getJSONFromQuery("cubg_match", "id", Integer.toString(ID)).getAsJsonArray())[0]; }
+
+    public static BFMatch getMatchFromNumber(int number){ return getMatchesFromJson(getJSONFromQuery("cubg_match", "number", Integer.toString(number)).getAsJsonArray())[0]; }
+
+    public static BFMatch[] getMatchesFromWinningPlayer(int winningPlayerID){ return getMatchesFromJson(getJSONFromQuery("cubg_match", "winning_player_id", Integer.toString(winningPlayerID)).getAsJsonArray()); }
 
 }

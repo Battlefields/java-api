@@ -20,7 +20,7 @@ public class BFPlayer {
         return ID;
     }
 
-    public String getUuid() {
+    public String getUUID() {
         return uuid;
     }
 
