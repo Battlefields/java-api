@@ -1,6 +1,6 @@
-package io.github.tastac.bfj.api.components;
+package io.github.tastac.bfj.components;
 
-import io.github.tastac.bfj.api.DataRetriever;
+import io.github.tastac.bfj.DataRetriever;
 
 import java.util.Date;
 
@@ -9,13 +9,14 @@ public class BFPlayer {
     private int ID;
     private String uuid;
     private String username;
-    private Date lastSeen;
+    private String lastSeen;
 
-    private BFMatch matches[];
+    private int matchesID[];
+    private BFMatch[] matches;
     private BFKill kill[];
     private int wins = -1;
 
-    public BFPlayer(int ID, String uuid, String username, Date lastSeen){
+    public BFPlayer(int ID, String uuid, String username, String lastSeen){
         this.ID = ID;
         this.uuid = uuid;
         this.username = username;
@@ -36,12 +37,23 @@ public class BFPlayer {
         return username;
     }
 
-    public Date getLastSeen() {
+    public String getLastSeen() {
         return lastSeen;
     }
 
+    public int[] getMatchIDs(){
+        if(matchesID == null) matchesID = DataRetriever.getMatchesContainingPlayer(this);
+        return matchesID;
+    }
+
     public BFMatch[] getMatches(){
-        if(matches == null) matches = DataRetriever.getMatchesContainingPlayer(this);
+        if(matchesID == null) DataRetriever.getMatchesContainingPlayer(this);
+        if(matches == null){
+            matches = new BFMatch[matchesID.length];
+            for(int i : matchesID){
+                matches[i] = DataRetriever.getMatchFromID(i);
+            }
+        }
         return matches;
     }
 

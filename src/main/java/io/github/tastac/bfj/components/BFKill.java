@@ -1,7 +1,7 @@
-package io.github.tastac.bfj.api.components;
+package io.github.tastac.bfj.components;
 
 import com.sun.javafx.geom.Vec3d;
-import io.github.tastac.bfj.api.DataRetriever;
+import io.github.tastac.bfj.DataRetriever;
 
 public class BFKill {
 

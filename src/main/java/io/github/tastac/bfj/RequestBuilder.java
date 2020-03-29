@@ -1,4 +1,4 @@
-package io.github.tastac.bfj.api;
+package io.github.tastac.bfj;
 
 public class RequestBuilder {
 
