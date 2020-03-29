@@ -58,8 +58,8 @@ public class BFPlayer {
     }
 
     public float getKDRatio(){
-        int kills = getTotalKills();
-        int deaths = getMatchIDs().length - getTotalWins();
+        float kills = getTotalKills();
+        float deaths = getMatchIDs().length - getTotalWins();
 
         if(deaths <= 0){
             return 0f;
