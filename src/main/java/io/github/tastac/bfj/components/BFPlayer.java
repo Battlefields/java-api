@@ -47,6 +47,8 @@ public class BFPlayer {
 
     public int getTotalWins(){ return DataRetriever.getWinsTotalFromPlayer(this); }
 
+    public int getTotalDeaths(){ return getMatchIDs().length - getTotalWins(); }
+
     public int getRank(){
         java.util.Map<BFPlayer, Integer> scoreMap = DataRetriever.getScoreMap();
         List<BFPlayer> list = new ArrayList<>(scoreMap.keySet());
@@ -57,12 +59,12 @@ public class BFPlayer {
 
     public float getKDRatio(){
         int kills = getTotalKills();
-        int wins = getTotalWins();
+        int deaths = getMatchIDs().length - getTotalWins();
 
-        if(wins <= 0){
+        if(deaths <= 0){
             return 0f;
         }else{
-            return kills / wins;
+            return kills / deaths;
         }
     }
 
