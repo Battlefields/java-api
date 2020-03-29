@@ -135,7 +135,7 @@ public class DataRetriever {
         }
     }
 
-    public static int getWinsTotalFromPlayer(BFPlayer player){ return getKillsFromJson(getJSONFromQuery("cubg_most_wins", "uuid", player.getUUID())); }
+    public static int getWinsTotalFromPlayer(BFPlayer player){ return getWinsFromJson(getJSONFromQuery("cubg_most_wins", "uuid", player.getUUID())); }
 
     public static java.util.Map<String, Integer> getWinMap(){
         try{
