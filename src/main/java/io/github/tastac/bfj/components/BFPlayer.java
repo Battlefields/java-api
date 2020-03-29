@@ -2,7 +2,10 @@ package io.github.tastac.bfj.components;
 
 import io.github.tastac.bfj.DataRetriever;
 
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 
 public class BFPlayer {
 
@@ -10,11 +13,6 @@ public class BFPlayer {
     private String uuid;
     private String username;
     private String lastSeen;
-
-    private int matchesID[];
-    private BFMatch[] matches;
-    private BFKill kill[];
-    private int wins = -1;
 
     public BFPlayer(int ID, String uuid, String username, String lastSeen){
         this.ID = ID;
@@ -41,34 +39,44 @@ public class BFPlayer {
         return lastSeen;
     }
 
-    public int[] getMatchIDs(){
-        if(matchesID == null) matchesID = DataRetriever.getMatchesContainingPlayer(this);
-        return matchesID;
+    public int[] getMatchIDs(){ return DataRetriever.getMatchesContainingPlayer(this); }
+
+    public BFKill[] getKills(){ return DataRetriever.getKillsByBFPlayerSource(this); }
+
+    public int getTotalKills(){ return DataRetriever.getKillTotalFromPlayer(this); }
+
+    public int getTotalWins(){ return DataRetriever.getWinsTotalFromPlayer(this); }
+
+    public int getRank(){
+        java.util.Map<BFPlayer, Integer> scoreMap = DataRetriever.getScoreMap();
+        List<BFPlayer> list = new ArrayList<>(scoreMap.keySet());
+        Collections.sort(list, (a, b) -> scoreMap.get(b) - scoreMap.get(a));
+
+        return list.indexOf(this) + 1;
     }
 
-    public BFMatch[] getMatches(){
-        if(matchesID == null) DataRetriever.getMatchesContainingPlayer(this);
-        if(matches == null){
-            matches = new BFMatch[matchesID.length];
-            for(int i : matchesID){
-                matches[i] = DataRetriever.getMatchFromID(i);
-            }
+    public float getKDRatio(){
+        int kills = getTotalKills();
+        int wins = getTotalWins();
+
+        if(wins <= 0){
+            return 0f;
+        }else{
+            return kills / wins;
         }
-        return matches;
     }
 
-    public BFKill[] getKills(){
-        if (kill == null) kill = DataRetriever.getKillsBySourceID(ID);
-            return kill;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof BFPlayer)) return false;
+        BFPlayer bfPlayer = (BFPlayer) o;
+        return ID == bfPlayer.ID &&
+                uuid.equals(bfPlayer.uuid);
     }
 
-    public int getTotalKills(){
-        if (kill == null) kill = DataRetriever.getKillsBySourceID(ID);
-        return kill.length;
-    }
-
-    public int getTotalWins(){
-        if (wins == -1) wins = DataRetriever.getMatchesFromWinningPlayer(this).length;
-        return wins;
+    @Override
+    public int hashCode() {
+        return Objects.hash(ID, uuid);
     }
 }

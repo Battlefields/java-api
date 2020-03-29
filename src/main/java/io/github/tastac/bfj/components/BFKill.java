@@ -3,6 +3,8 @@ package io.github.tastac.bfj.components;
 import com.sun.javafx.geom.Vec3d;
 import io.github.tastac.bfj.DataRetriever;
 
+import java.util.Objects;
+
 public class BFKill {
 
     private int ID;
@@ -49,5 +51,19 @@ public class BFKill {
 
     public BFWeapon getWeapon() {
         return DataRetriever.getWeaponByID(weaponID);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof BFKill)) return false;
+        BFKill bfKill = (BFKill) o;
+        return ID == bfKill.ID &&
+                matchID == bfKill.matchID;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(ID, matchID);
     }
 }

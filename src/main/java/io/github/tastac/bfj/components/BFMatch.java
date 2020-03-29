@@ -2,6 +2,8 @@ package io.github.tastac.bfj.components;
 
 import io.github.tastac.bfj.DataRetriever;
 
+import java.util.Objects;
+
 public class BFMatch {
 
     private int ID;
@@ -47,5 +49,19 @@ public class BFMatch {
             }
         }
         return participatingPlayers;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof BFMatch)) return false;
+        BFMatch bfMatch = (BFMatch) o;
+        return ID == bfMatch.ID &&
+                number == bfMatch.number;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(ID, number);
     }
 }
