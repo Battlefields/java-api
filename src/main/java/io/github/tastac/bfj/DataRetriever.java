@@ -5,10 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.sun.javafx.geom.Vec3d;
-import io.github.tastac.bfj.components.BFKill;
-import io.github.tastac.bfj.components.BFMatch;
-import io.github.tastac.bfj.components.BFPlayer;
-import io.github.tastac.bfj.components.BFWeapon;
+import io.github.tastac.bfj.components.*;
 import javafx.util.Pair;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
@@ -81,9 +78,46 @@ public class DataRetriever {
 
     public static BFWeapon getWeaponByItemName(String itemName){ return getWeaponFromJson(getJSONFromQuery("cubg_weapons", "item_name", itemName)); }
 
-    // ########## KILLS OBJECTS ##########
+    // ########## WEAPON STATS ##########
 
-    public static BFKill[] getKillObjFromJson(JsonElement killsJson){
+    private static BFWeaponStats[] getWeaponStatsFromJson(JsonElement wStatsJson){
+        try{
+            JsonArray object = wStatsJson.getAsJsonArray();
+
+            BFWeaponStats[] stats = new BFWeaponStats[object.size()];
+            for(int i = 0; i < stats.length; i++){
+                JsonObject element = object.get(i).getAsJsonObject();
+                stats[i] = new BFWeaponStats(
+                        element.get("id").getAsInt(),
+                        element.get("match_id").getAsInt(),
+                        element.get("player_id").getAsInt(),
+                        element.get("weapon_id").getAsInt(),
+                        element.get("shots_fired").getAsInt(),
+                        element.get("shots_hit").getAsInt()
+                );
+            }
+            return stats;
+        }catch(IllegalStateException e){
+            return new BFWeaponStats[]{new BFWeaponStats(0, 0, 0, 0, 0, 0)};
+        }
+    }
+
+    public static BFWeaponStats[] getWeaponStatsForPlayer(BFPlayer player, BFWeapon weapon){
+        RequestBuilder rb = new RequestBuilder("cubg_weapon_stats");
+        rb.addSearchQuery("player_id", Integer.toString(player.getID()));
+        rb.addSearchQuery("weapon_id", Integer.toString(weapon.getID()));
+        return getWeaponStatsFromJson(getJSONFromRequestBuilder(rb));
+    }
+
+    public static BFWeaponStats[] getWeaponStatsFromBFPlayer(BFPlayer player){ return getWeaponStatsFromJson(getJSONFromQuery("cubg_weapon_stats", "player_id", Integer.toString(player.getID()))); }
+
+    public static BFWeaponStats[] getWeaponStatsFromWeapon(BFWeapon weapon){ return getWeaponStatsFromJson(getJSONFromQuery("cubg_weapon_stats", "weapon_id", Integer.toString(weapon.getID()))); }
+
+    public static BFWeaponStats[] getWeaponStatsFromWeapon(BFMatch match){ return getWeaponStatsFromJson(getJSONFromQuery("cubg_weapon_stats", "match_id", Integer.toString(match.getID()))); }
+
+    // ########## KILLS ##########
+
+    private static BFKill[] getKillObjFromJson(JsonElement killsJson){
         try{
             JsonArray killsArray = killsJson.getAsJsonArray();
             BFKill[] kills = new BFKill[killsArray.size()];
@@ -117,7 +151,7 @@ public class DataRetriever {
 
     // ########## TOTALS ##########
 
-    public static int getKillsFromJson(JsonElement killsJson){
+    private static int getKillsFromJson(JsonElement killsJson){
         try{
             return killsJson.getAsJsonArray().get(0).getAsJsonObject().get("kills").getAsInt();
         }catch (IllegalStateException e){
@@ -127,7 +161,7 @@ public class DataRetriever {
 
     public static int getKillTotalFromPlayer(BFPlayer player){ return getKillsFromJson(getJSONFromQuery("cubg_most_kills", "uuid", player.getUUID())); }
 
-    public static int getWinsFromJson(JsonElement winsJson){
+    private static int getWinsFromJson(JsonElement winsJson){
         try{
             return winsJson.getAsJsonArray().get(0).getAsJsonObject().get("wins").getAsInt();
         }catch (IllegalStateException e){
@@ -171,7 +205,7 @@ public class DataRetriever {
 
     // ########## PLAYERS ##########
 
-    public static BFPlayer getPlayerFromJson(JsonElement playerJson){
+    private static BFPlayer getPlayerFromJson(JsonElement playerJson){
         try{
             JsonObject player = playerJson.getAsJsonArray().get(0).getAsJsonObject();
             return new BFPlayer(player.get("id").getAsInt(), player.get("uuid").getAsString(), player.get("username").getAsString(), player.get("last_seen").getAsString());
@@ -180,7 +214,7 @@ public class DataRetriever {
         }
     }
 
-    public static BFPlayer[] getPlayersFromJson(JsonElement playerJson){
+    private static BFPlayer[] getPlayersFromJson(JsonElement playerJson){
         try{
             JsonArray json = playerJson.getAsJsonArray();
             BFPlayer[] players = new BFPlayer[json.size()];
@@ -199,8 +233,7 @@ public class DataRetriever {
     public static BFPlayer getPlayerByID(int ID){ return getPlayerFromJson(getJSONFromQuery("cubg_players", "id", Integer.toString(ID))); }
 
     public static BFPlayer getPlayerByUUID(String uuid){
-        uuid.replaceAll("-", "");
-        return getPlayerFromJson(getJSONFromQuery("cubg_players", "uuid", uuid));
+        return getPlayerFromJson(getJSONFromQuery("cubg_players", "uuid", uuid.replaceAll("-", "")));
     }
 
     public static BFPlayer getPlayerByUsername(String username){ return getPlayerFromJson(getJSONFromQuery("cubg_players", "username", username)); }
@@ -209,7 +242,7 @@ public class DataRetriever {
 
     // ########## MATCHES ##########
 
-    public static BFMatch[] getMatchesFromJson(JsonElement matchArrayJson){
+    private static BFMatch[] getMatchesFromJson(JsonElement matchArrayJson){
         try {
             JsonArray jsonObject = matchArrayJson.getAsJsonArray();
             BFMatch[] matches = new BFMatch[jsonObject.size()];
@@ -226,25 +259,19 @@ public class DataRetriever {
             }
             return matches;
         }catch (IllegalStateException e){
-            return new BFMatch[0];
+            return new BFMatch[]{new BFMatch(0, 0, "", "", 0)};
         }
     }
 
-    public static BFMatch getMatchFromID(int ID){
-        BFMatch[] matches = getMatchesFromJson(getJSONFromQuery("cubg_match", "id", Integer.toString(ID)));
-        return (matches.length == 0 ? new BFMatch(0, 0, "", "", 0) : matches[1]);
-    }
+    public static BFMatch getMatchFromID(int ID){ return getMatchesFromJson(getJSONFromQuery("cubg_match", "id", Integer.toString(ID)))[0]; }
 
-    public static BFMatch getMatchFromNumber(int number){
-        BFMatch[] matches = getMatchesFromJson(getJSONFromQuery("cubg_match", "number", Integer.toString(number)));
-        return (matches.length == 0 ? new BFMatch(0, 0, "", "", 0) : matches[1]);
-    }
+    public static BFMatch getMatchFromNumber(int number){ return getMatchesFromJson(getJSONFromQuery("cubg_match", "number", Integer.toString(number)))[0]; }
 
     public static BFMatch[] getMatchesFromWinningPlayer(BFPlayer player){ return getMatchesFromJson(getJSONFromQuery("cubg_match", "winning_player_id", Integer.toString(player.getID()))); }
 
     // ########## PARTICIPANT MATCHES ##########
 
-    public static int[] getPMatchesFromJson(JsonElement pMatchArrayJson){
+    private static int[] getPMatchesFromJson(JsonElement pMatchArrayJson){
         try{
             JsonArray object = pMatchArrayJson.getAsJsonArray();
 
@@ -276,6 +303,58 @@ public class DataRetriever {
     public static int[] getMatchesContainingPlayer(BFPlayer player){ return getPMatchesFromJson(getJSONFromQuery("cubg_participants", "player_id", Integer.toString(player.getID()))); }
 
     public static int[] getPlayersInMatch(BFMatch match){ return getMPlayersFromJson(getJSONFromQuery("cubg_participants", "match_id", Integer.toString(match.getID()))); }
+
+    // ########## ACCESSORIES ##########
+
+    private static BFAccessory[] getAccessoriesFromJson(JsonElement accessoryJson){
+        try{
+            JsonArray object = accessoryJson.getAsJsonArray();
+
+            BFAccessory[] accessories = new BFAccessory[object.size()];
+            for(int i = 0; i < accessories.length; i++){
+                JsonObject element = object.get(i).getAsJsonObject();
+                accessories[i] = new BFAccessory(element.get("id").getAsInt(), element.get("accessory_type").getAsInt(), element.get("name").getAsString(), element.get("data").getAsString(), element.get("enabled").getAsBoolean(), element.get("hidden").getAsBoolean());
+            }
+
+            return accessories;
+        }catch(IllegalStateException e){
+            return new BFAccessory[]{new BFAccessory(0, 0, "", "", false, false)};
+        }
+    }
+
+    public static BFAccessory getAccessoryFromID(int ID){ return getAccessoriesFromJson(getJSONFromQuery("cubg_accessory_list", "id", Integer.toString(ID)))[0]; }
+
+    public static BFAccessory[] getAccessoryFromTypeID(int typeID){ return getAccessoriesFromJson(getJSONFromQuery("cubg_accessory_list", "accessory_type", Integer.toString(typeID))); }
+
+    public static BFAccessory getAccessoryFromName(String name){ return getAccessoriesFromJson(getJSONFromQuery("cubg_accessory_list", "name", name))[0]; }
+
+    public static BFAccessory getAccessoryFromData(String data){ return getAccessoriesFromJson(getJSONFromQuery("cubg_accessory_list", "data", data))[0]; }
+
+    public static BFAccessory[] getAccessoryIfEnabled(boolean enabled){ return getAccessoriesFromJson(getJSONFromQuery("cubg_accessory_list", "enabled", Integer.toString(enabled ? 1 : 0))); }
+
+    public static BFAccessory[] getAccessoriesIfHidden(boolean hidden){ return getAccessoriesFromJson(getJSONFromQuery("cubg_accessory_list", "hidden", Integer.toString(hidden ? 1 : 0))); }
+
+    // ########## PLAYER ACCESSORIES ##########
+
+    private static int[] getAccessoryIDsFromJson(JsonElement pAccessoryJson){
+        try{
+            JsonArray object = pAccessoryJson.getAsJsonArray();
+
+            int[] pAccessories = new int[object.size()];
+            for(int i = 0; i < pAccessories.length; i++){
+                JsonObject element = object.get(i).getAsJsonObject();
+                pAccessories[i] = element.get("accessory_id").getAsInt();
+            }
+
+            return pAccessories;
+        }catch(IllegalStateException e){
+            return new int[0];
+        }
+    }
+
+    public static int[] getOwnedAccessoriesFromUUID(String UUID){ return getAccessoryIDsFromJson(getJSONFromQuery("cubg_accessories", "uuid", UUID.replaceAll("-", ""))); }
+
+    public static int[] getOwnedAccessoriesFromBFPlayer(BFPlayer player){ return getAccessoryIDsFromJson(getJSONFromQuery("cubg_accessories", "uuid", player.getUUID().replaceAll("-", ""))); }
 
     // ########## EXTRA ##########
 
