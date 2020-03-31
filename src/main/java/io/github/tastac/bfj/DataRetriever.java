@@ -313,7 +313,13 @@ public class DataRetriever {
             BFAccessory[] accessories = new BFAccessory[object.size()];
             for(int i = 0; i < accessories.length; i++){
                 JsonObject element = object.get(i).getAsJsonObject();
-                accessories[i] = new BFAccessory(element.get("id").getAsInt(), element.get("accessory_type").getAsInt(), element.get("name").getAsString(), element.get("data").getAsString(), element.get("enabled").getAsBoolean(), element.get("hidden").getAsBoolean());
+                accessories[i] = new BFAccessory(
+                        element.get("id").getAsInt(),
+                        element.get("accessory_type").getAsInt(),
+                        element.get("name").getAsString(),
+                        element.get("data").getAsString(),
+                        element.get("enabled").getAsInt() == 1 ? true : false,
+                        element.get("hidden").getAsInt() == 1 ? true : false);
             }
 
             return accessories;
@@ -330,7 +336,7 @@ public class DataRetriever {
 
     public static BFAccessory getAccessoryFromData(String data){ return getAccessoriesFromJson(getJSONFromQuery("cubg_accessory_list", "data", data))[0]; }
 
-    public static BFAccessory[] getAccessoryIfEnabled(boolean enabled){ return getAccessoriesFromJson(getJSONFromQuery("cubg_accessory_list", "enabled", Integer.toString(enabled ? 1 : 0))); }
+    public static BFAccessory[] getAccessoriesIfEnabled(boolean enabled){ return getAccessoriesFromJson(getJSONFromQuery("cubg_accessory_list", "enabled", Integer.toString(enabled ? 0 : 1))); }
 
     public static BFAccessory[] getAccessoriesIfHidden(boolean hidden){ return getAccessoriesFromJson(getJSONFromQuery("cubg_accessory_list", "hidden", Integer.toString(hidden ? 1 : 0))); }
 
