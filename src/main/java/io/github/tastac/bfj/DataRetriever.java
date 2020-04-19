@@ -242,6 +242,32 @@ public class DataRetriever {
 
     public static BFPlayer[] getAllPlayers(){ return getPlayersFromJson(getJSONFromTable("players")); }
 
+    // ########## DISCORD ##########
+
+    private static String getDiscordFromJson(JsonElement discordJson){
+        try{
+            JsonObject discord = discordJson.getAsJsonArray().get(0).getAsJsonObject();
+            return discord.get("discord_id").getAsString();
+        }catch (IllegalStateException e){
+            return "";
+        }
+    }
+
+    private static String getUUIDFromJson(JsonElement discordJson){
+        try{
+            JsonObject discord = discordJson.getAsJsonArray().get(0).getAsJsonObject();
+            return discord.get("uuid").getAsString();
+        }catch (IllegalStateException e){
+            return "";
+        }
+    }
+
+    public static String getDiscordByPlayer(BFPlayer player){ return getDiscordFromJson(getJSONFromQuery("linked_discord", "uuid", player.getUUID())); }
+
+    public static String getDiscordByUUID(String uuid){ return getDiscordFromJson(getJSONFromQuery("linked_discord", "uuid", uuid)); }
+
+    public static String getPlayerByDiscord(String discordID){ return getUUIDFromJson((getJSONFromQuery("linked_discord", "discord_id", discordID))); }
+
     // ########## MATCHES ##########
 
     private static BFMatch[] getMatchesFromJson(JsonElement matchArrayJson){
