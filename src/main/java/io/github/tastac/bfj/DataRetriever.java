@@ -72,11 +72,11 @@ public class DataRetriever {
         }
     }
 
-    public static BFWeapon getWeaponByID(int ID){ return getWeaponFromJson(getJSONFromQuery("cubg_weapons", "id", Integer.toString(ID))); }
+    public static BFWeapon getWeaponByID(int ID){ return getWeaponFromJson(getJSONFromQuery("weapons", "id", Integer.toString(ID))); }
 
-    public static BFWeapon getWeaponByItemID(int itemID){ return getWeaponFromJson(getJSONFromQuery("cubg_weapons", "item_id", Integer.toString(itemID))); }
+    public static BFWeapon getWeaponByItemID(int itemID){ return getWeaponFromJson(getJSONFromQuery("weapons", "item_id", Integer.toString(itemID))); }
 
-    public static BFWeapon getWeaponByItemName(String itemName){ return getWeaponFromJson(getJSONFromQuery("cubg_weapons", "item_name", itemName)); }
+    public static BFWeapon getWeaponByItemName(String itemName){ return getWeaponFromJson(getJSONFromQuery("weapons", "item_name", itemName)); }
 
     // ########## WEAPON STATS ##########
 
@@ -103,17 +103,17 @@ public class DataRetriever {
     }
 
     public static BFWeaponStats[] getWeaponStatsForPlayer(BFPlayer player, BFWeapon weapon){
-        RequestBuilder rb = new RequestBuilder("cubg_weapon_stats");
+        RequestBuilder rb = new RequestBuilder("weapon_stats");
         rb.addSearchQuery("player_id", Integer.toString(player.getID()));
         rb.addSearchQuery("weapon_id", Integer.toString(weapon.getID()));
         return getWeaponStatsFromJson(getJSONFromRequestBuilder(rb));
     }
 
-    public static BFWeaponStats[] getWeaponStatsFromBFPlayer(BFPlayer player){ return getWeaponStatsFromJson(getJSONFromQuery("cubg_weapon_stats", "player_id", Integer.toString(player.getID()))); }
+    public static BFWeaponStats[] getWeaponStatsFromBFPlayer(BFPlayer player){ return getWeaponStatsFromJson(getJSONFromQuery("weapon_stats", "player_id", Integer.toString(player.getID()))); }
 
-    public static BFWeaponStats[] getWeaponStatsFromWeapon(BFWeapon weapon){ return getWeaponStatsFromJson(getJSONFromQuery("cubg_weapon_stats", "weapon_id", Integer.toString(weapon.getID()))); }
+    public static BFWeaponStats[] getWeaponStatsFromWeapon(BFWeapon weapon){ return getWeaponStatsFromJson(getJSONFromQuery("weapon_stats", "weapon_id", Integer.toString(weapon.getID()))); }
 
-    public static BFWeaponStats[] getWeaponStatsFromWeapon(BFMatch match){ return getWeaponStatsFromJson(getJSONFromQuery("cubg_weapon_stats", "match_id", Integer.toString(match.getID()))); }
+    public static BFWeaponStats[] getWeaponStatsFromWeapon(BFMatch match){ return getWeaponStatsFromJson(getJSONFromQuery("weapon_stats", "match_id", Integer.toString(match.getID()))); }
 
     // ########## KILLS ##########
 
@@ -141,9 +141,9 @@ public class DataRetriever {
         }
     }
 
-    public static BFKill[] getKillsBySourceID(int sourceID){ return getKillObjFromJson(getJSONFromQuery("cubg_kills", "source_player", Integer.toString(sourceID))); }
+    public static BFKill[] getKillsBySourceID(int sourceID){ return getKillObjFromJson(getJSONFromQuery("match_kills", "source_player", Integer.toString(sourceID))); }
 
-    public static BFKill[] getKillsByTargetID(int targetID){ return getKillObjFromJson(getJSONFromQuery("cubg_kills", "target_player", Integer.toString(targetID))); }
+    public static BFKill[] getKillsByTargetID(int targetID){ return getKillObjFromJson(getJSONFromQuery("match_kills", "target_player", Integer.toString(targetID))); }
 
     public static BFKill[] getKillsByBFPlayerSource(BFPlayer sourcePlayer){ return getKillsBySourceID(sourcePlayer.getID()); }
 
@@ -159,7 +159,7 @@ public class DataRetriever {
         }
     }
 
-    public static int getKillTotalFromPlayer(BFPlayer player){ return getKillsFromJson(getJSONFromQuery("cubg_most_kills", "uuid", player.getUUID())); }
+    public static int getKillTotalFromPlayer(BFPlayer player){ return getKillsFromJson(getJSONFromQuery("kills", "uuid", player.getUUID())); }
 
     private static int getWinsFromJson(JsonElement winsJson){
         try{
@@ -169,11 +169,11 @@ public class DataRetriever {
         }
     }
 
-    public static int getWinsTotalFromPlayer(BFPlayer player){ return getWinsFromJson(getJSONFromQuery("cubg_most_wins", "uuid", player.getUUID())); }
+    public static int getWinsTotalFromPlayer(BFPlayer player){ return getWinsFromJson(getJSONFromQuery("wins", "uuid", player.getUUID())); }
 
     public static java.util.Map<String, Integer> getWinMap(){
         try{
-            JsonArray object = getJSONFromTable("cubg_most_wins").getAsJsonArray();
+            JsonArray object = getJSONFromTable("wins").getAsJsonArray();
 
             java.util.Map<String, Integer> winsMap = new HashMap<>();
 
@@ -189,7 +189,7 @@ public class DataRetriever {
 
     public static java.util.Map<String, Integer> getKillMap(){
         try{
-            JsonArray object = getJSONFromTable("cubg_most_kills").getAsJsonArray();
+            JsonArray object = getJSONFromTable("kills").getAsJsonArray();
 
             java.util.Map<String, Integer> winsMap = new HashMap<>();
 
@@ -230,15 +230,15 @@ public class DataRetriever {
         }
     }
 
-    public static BFPlayer getPlayerByID(int ID){ return getPlayerFromJson(getJSONFromQuery("cubg_players", "id", Integer.toString(ID))); }
+    public static BFPlayer getPlayerByID(int ID){ return getPlayerFromJson(getJSONFromQuery("players", "id", Integer.toString(ID))); }
 
     public static BFPlayer getPlayerByUUID(String uuid){
-        return getPlayerFromJson(getJSONFromQuery("cubg_players", "uuid", uuid.replaceAll("-", "")));
+        return getPlayerFromJson(getJSONFromQuery("players", "uuid", uuid.replaceAll("-", "")));
     }
 
-    public static BFPlayer getPlayerByUsername(String username){ return getPlayerFromJson(getJSONFromQuery("cubg_players", "username", username)); }
+    public static BFPlayer getPlayerByUsername(String username){ return getPlayerFromJson(getJSONFromQuery("players", "username", username)); }
 
-    public static BFPlayer[] getAllPlayers(){ return getPlayersFromJson(getJSONFromTable("cubg_players")); }
+    public static BFPlayer[] getAllPlayers(){ return getPlayersFromJson(getJSONFromTable("players")); }
 
     // ########## MATCHES ##########
 
@@ -263,11 +263,11 @@ public class DataRetriever {
         }
     }
 
-    public static BFMatch getMatchFromID(int ID){ return getMatchesFromJson(getJSONFromQuery("cubg_match", "id", Integer.toString(ID)))[0]; }
+    public static BFMatch getMatchFromID(int ID){ return getMatchesFromJson(getJSONFromQuery("matches", "id", Integer.toString(ID)))[0]; }
 
-    public static BFMatch getMatchFromNumber(int number){ return getMatchesFromJson(getJSONFromQuery("cubg_match", "number", Integer.toString(number)))[0]; }
+    public static BFMatch getMatchFromNumber(int number){ return getMatchesFromJson(getJSONFromQuery("matches", "number", Integer.toString(number)))[0]; }
 
-    public static BFMatch[] getMatchesFromWinningPlayer(BFPlayer player){ return getMatchesFromJson(getJSONFromQuery("cubg_match", "winning_player_id", Integer.toString(player.getID()))); }
+    public static BFMatch[] getMatchesFromWinningPlayer(BFPlayer player){ return getMatchesFromJson(getJSONFromQuery("matches", "winning_player_id", Integer.toString(player.getID()))); }
 
     // ########## PARTICIPANT MATCHES ##########
 
@@ -300,9 +300,9 @@ public class DataRetriever {
         }
     }
 
-    public static int[] getMatchesContainingPlayer(BFPlayer player){ return getPMatchesFromJson(getJSONFromQuery("cubg_participants", "player_id", Integer.toString(player.getID()))); }
+        public static int[] getMatchesContainingPlayer(BFPlayer player){ return getPMatchesFromJson(getJSONFromQuery("match_participants", "player_id", Integer.toString(player.getID()))); }
 
-    public static int[] getPlayersInMatch(BFMatch match){ return getMPlayersFromJson(getJSONFromQuery("cubg_participants", "match_id", Integer.toString(match.getID()))); }
+    public static int[] getPlayersInMatch(BFMatch match){ return getMPlayersFromJson(getJSONFromQuery("match_participants", "match_id", Integer.toString(match.getID()))); }
 
     // ########## ACCESSORIES ##########
 
@@ -328,17 +328,17 @@ public class DataRetriever {
         }
     }
 
-    public static BFAccessory getAccessoryFromID(int ID){ return getAccessoriesFromJson(getJSONFromQuery("cubg_accessory_list", "id", Integer.toString(ID)))[0]; }
+    public static BFAccessory getAccessoryFromID(int ID){ return getAccessoriesFromJson(getJSONFromQuery("accessories", "id", Integer.toString(ID)))[0]; }
 
-    public static BFAccessory[] getAccessoryFromTypeID(int typeID){ return getAccessoriesFromJson(getJSONFromQuery("cubg_accessory_list", "accessory_type", Integer.toString(typeID))); }
+    public static BFAccessory[] getAccessoryFromTypeID(int typeID){ return getAccessoriesFromJson(getJSONFromQuery("accessories", "accessory_type", Integer.toString(typeID))); }
 
-    public static BFAccessory getAccessoryFromName(String name){ return getAccessoriesFromJson(getJSONFromQuery("cubg_accessory_list", "name", name))[0]; }
+    public static BFAccessory getAccessoryFromName(String name){ return getAccessoriesFromJson(getJSONFromQuery("accessories", "name", name))[0]; }
 
-    public static BFAccessory getAccessoryFromData(String data){ return getAccessoriesFromJson(getJSONFromQuery("cubg_accessory_list", "data", data))[0]; }
+    public static BFAccessory getAccessoryFromData(String data){ return getAccessoriesFromJson(getJSONFromQuery("accessories", "data", data))[0]; }
 
-    public static BFAccessory[] getAccessoriesIfEnabled(boolean enabled){ return getAccessoriesFromJson(getJSONFromQuery("cubg_accessory_list", "enabled", Integer.toString(enabled ? 0 : 1))); }
+    public static BFAccessory[] getAccessoriesIfEnabled(boolean enabled){ return getAccessoriesFromJson(getJSONFromQuery("accessories", "enabled", Integer.toString(enabled ? 0 : 1))); }
 
-    public static BFAccessory[] getAccessoriesIfHidden(boolean hidden){ return getAccessoriesFromJson(getJSONFromQuery("cubg_accessory_list", "hidden", Integer.toString(hidden ? 1 : 0))); }
+    public static BFAccessory[] getAccessoriesIfHidden(boolean hidden){ return getAccessoriesFromJson(getJSONFromQuery("accessories", "hidden", Integer.toString(hidden ? 1 : 0))); }
 
     // ########## PLAYER ACCESSORIES ##########
 
@@ -358,15 +358,15 @@ public class DataRetriever {
         }
     }
 
-    public static int[] getOwnedAccessoriesFromUUID(String UUID){ return getAccessoryIDsFromJson(getJSONFromQuery("cubg_accessories", "uuid", UUID.replaceAll("-", ""))); }
+    public static int[] getOwnedAccessoriesFromUUID(String UUID){ return getAccessoryIDsFromJson(getJSONFromQuery("owned_accessories", "uuid", UUID.replaceAll("-", ""))); }
 
-    public static int[] getOwnedAccessoriesFromBFPlayer(BFPlayer player){ return getAccessoryIDsFromJson(getJSONFromQuery("cubg_accessories", "uuid", player.getUUID().replaceAll("-", ""))); }
+    public static int[] getOwnedAccessoriesFromBFPlayer(BFPlayer player){ return getAccessoryIDsFromJson(getJSONFromQuery("owned_accessories", "uuid", player.getUUID().replaceAll("-", ""))); }
 
     // ########## EXTRA ##########
 
     public static BFKill[] getKillsOnPlayer(BFPlayer source, BFPlayer target){
         try {
-            return getKillObjFromJson(getJSONFromRequestBuilder(new RequestBuilder("cubg_kills")
+            return getKillObjFromJson(getJSONFromRequestBuilder(new RequestBuilder("match_kills")
                     .addSearchQuery("source_player", Integer.toString(source.getID()))
                     .addSearchQuery("target_player", Integer.toString(target.getID())))
                     .getAsJsonArray());
