@@ -59,6 +59,31 @@ public class DataRetriever {
 
     //TODO Add documentation to all of these methods
 
+    // ########## SERVER STATUS ##########
+
+    public static String getServerStatus(){
+        HttpGet request = new HttpGet("https://api.battlefieldsmc.net/api/status/");
+
+        request.addHeader(HttpHeaders.USER_AGENT, "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
+
+        try (CloseableHttpResponse response = httpClient.execute(request)) {
+            HttpEntity entity = response.getEntity();
+            if (entity != null) {
+                return JsonParser.parseString(
+                        EntityUtils.toString(entity))
+                        .getAsJsonArray()
+                        .get(0)
+                        .getAsJsonObject()
+                        .get("us-east.battlefieldsmc.net")
+                        .getAsString();
+            }
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+
+        return "red";
+    }
+
     // ########## WEAPONS ##########
 
     private static BFWeapon getWeaponFromJson(JsonElement weaponJson){
@@ -266,7 +291,7 @@ public class DataRetriever {
 
     public static String getDiscordByUUID(String uuid){ return getDiscordFromJson(getJSONFromQuery("linked_discord", "uuid", uuid)); }
 
-    public static String getPlayerByDiscord(String discordID){ return getUUIDFromJson((getJSONFromQuery("linked_discord", "discord_id", discordID))); }
+    public static String getUUIDByDiscord(String discordID){ return getUUIDFromJson((getJSONFromQuery("linked_discord", "discord_id", discordID))); }
 
     // ########## MATCHES ##########
 
