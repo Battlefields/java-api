@@ -84,6 +84,28 @@ public class DataRetriever {
         return "red";
     }
 
+    public static int getOnlinePlayerCount(){
+        HttpGet request = new HttpGet("https://api.mcsrvstat.us/2/us-east.battlefieldsmc.net");
+
+        request.addHeader(HttpHeaders.USER_AGENT, "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
+
+        try (CloseableHttpResponse response = httpClient.execute(request)) {
+            HttpEntity entity = response.getEntity();
+            if (entity != null) {
+                return JsonParser.parseString(EntityUtils.toString(entity))
+                        .getAsJsonObject()
+                        .get("players")
+                        .getAsJsonObject()
+                        .get("online")
+                        .getAsInt();
+            }
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+
+        return 0;
+    }
+
     // ########## WEAPONS ##########
 
     private static BFWeapon getWeaponFromJson(JsonElement weaponJson){
