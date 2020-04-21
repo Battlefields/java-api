@@ -198,6 +198,8 @@ public class DataRetriever {
 
     public static BFKill[] getKillsByBFPlayerTarget(BFPlayer targetPlayer){ return getKillsBySourceID(targetPlayer.getID()); }
 
+    public static BFKill[] getAllKills(){ return getKillObjFromJson(getJSONFromTable("match_kills")); }
+
     // ########## TOTALS ##########
 
     private static int getKillsFromJson(JsonElement killsJson){
@@ -343,6 +345,8 @@ public class DataRetriever {
     public static BFMatch getMatchFromNumber(int number){ return getMatchesFromJson(getJSONFromQuery("matches", "number", Integer.toString(number)))[0]; }
 
     public static BFMatch[] getMatchesFromWinningPlayer(BFPlayer player){ return getMatchesFromJson(getJSONFromQuery("matches", "winning_player_id", Integer.toString(player.getID()))); }
+
+    public static BFMatch[] getAllMatches(){ return getMatchesFromJson(getJSONFromTable("matches")); };
 
     // ########## PARTICIPANT MATCHES ##########
 
