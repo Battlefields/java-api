@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+@Deprecated
 public class DataRetriever {
 
     private static final CloseableHttpClient httpClient = HttpClients.createDefault();
@@ -154,15 +155,15 @@ public class DataRetriever {
     public static BFWeaponStats[] getWeaponStatsForPlayer(BFPlayer player, BFWeapon weapon){
         RequestBuilder rb = new RequestBuilder("weapon_stats");
         rb.addSearchQuery("player_id", Integer.toString(player.getID()));
-        rb.addSearchQuery("weapon_id", Integer.toString(weapon.getID()));
+        rb.addSearchQuery("weapon_id", Integer.toString(weapon.getId()));
         return getWeaponStatsFromJson(getJSONFromRequestBuilder(rb));
     }
 
     public static BFWeaponStats[] getWeaponStatsFromBFPlayer(BFPlayer player){ return getWeaponStatsFromJson(getJSONFromQuery("weapon_stats", "player_id", Integer.toString(player.getID()))); }
 
-    public static BFWeaponStats[] getWeaponStatsFromWeapon(BFWeapon weapon){ return getWeaponStatsFromJson(getJSONFromQuery("weapon_stats", "weapon_id", Integer.toString(weapon.getID()))); }
+    public static BFWeaponStats[] getWeaponStatsFromWeapon(BFWeapon weapon){ return getWeaponStatsFromJson(getJSONFromQuery("weapon_stats", "weapon_id", Integer.toString(weapon.getId()))); }
 
-    public static BFWeaponStats[] getWeaponStatsFromWeapon(BFMatch match){ return getWeaponStatsFromJson(getJSONFromQuery("weapon_stats", "match_id", Integer.toString(match.getID()))); }
+    public static BFWeaponStats[] getWeaponStatsFromWeapon(BFMatch match){ return getWeaponStatsFromJson(getJSONFromQuery("weapon_stats", "match_id", Integer.toString(match.getId()))); }
 
     // ########## KILLS ##########
 
@@ -178,9 +179,9 @@ public class DataRetriever {
                         element.get("match_id").getAsInt(),
                         element.get("source_player").getAsInt(),
                         element.get("target_player").getAsInt(),
+                        element.get("weapon").getAsInt(),
                         new Vec3d(element.get("source_x").getAsDouble(), element.get("source_y").getAsDouble(), element.get("source_z").getAsDouble()),
-                        new Vec3d(element.get("target_x").getAsDouble(), element.get("target_y").getAsDouble(), element.get("target_z").getAsDouble()),
-                        element.get("weapon").getAsInt()
+                        new Vec3d(element.get("target_x").getAsDouble(), element.get("target_y").getAsDouble(), element.get("target_z").getAsDouble())
                 );
             }
 
@@ -381,7 +382,7 @@ public class DataRetriever {
 
         public static int[] getMatchesContainingPlayer(BFPlayer player){ return getPMatchesFromJson(getJSONFromQuery("match_participants", "player_id", Integer.toString(player.getID()))); }
 
-    public static int[] getPlayersInMatch(BFMatch match){ return getMPlayersFromJson(getJSONFromQuery("match_participants", "match_id", Integer.toString(match.getID()))); }
+    public static int[] getPlayersInMatch(BFMatch match){ return getMPlayersFromJson(getJSONFromQuery("match_participants", "match_id", Integer.toString(match.getId()))); }
 
     // ########## ACCESSORIES ##########
 
@@ -397,8 +398,8 @@ public class DataRetriever {
                         element.get("accessory_type").getAsInt(),
                         element.get("name").getAsString(),
                         element.get("data").getAsString(),
-                        element.get("enabled").getAsInt() == 1 ? true : false,
-                        element.get("hidden").getAsInt() == 1 ? true : false);
+                        element.get("enabled").getAsInt() == 1,
+                        element.get("hidden").getAsInt() == 1);
             }
 
             return accessories;

@@ -1,50 +1,118 @@
 package io.github.tastac.bfj.components;
 
+import com.google.gson.annotations.SerializedName;
 import io.github.tastac.bfj.BFJ;
 
-public class BFAccessory {
+import java.util.Objects;
 
-    private int ID;
-    private int typeID;
-    private String name;
-    private String data;
-    private boolean enabled;
-    private boolean hidden;
+/**
+ * <p>Information about an accessory in-game that has been queried from the Battlefields API.</p>
+ *
+ * @author Tastac
+ */
+public class BFAccessory
+{
+    // TODO test that this actually works
 
-    public BFAccessory(int ID, int typeID, String name, String data, boolean enabled, boolean hidden){
-        this.ID = ID;
-        this.typeID = typeID;
+    private final int id;
+    @SerializedName("accessory_type")
+    private final int typeId;
+    private final String name;
+    private final String data;
+    private final boolean enabled;
+    private final boolean hidden;
+
+    public BFAccessory(int id, int typeId, String name, String data, boolean enabled, boolean hidden)
+    {
+        this.id = id;
+        this.typeId = typeId;
         this.name = name;
         this.data = data;
         this.enabled = enabled;
         this.hidden = hidden;
     }
 
-    public int getID() {
-        return ID;
+    /**
+     * @return The id id this specific accessory
+     */
+    public int getId()
+    {
+        return id;
     }
 
-    public int getTypeID() {
-        return typeID;
+    /**
+     * @return id of the type of this accessory
+     */
+    public int getTypeId()
+    {
+        return typeId;
     }
 
-    public String getName() {
+    /**
+     * @return The display name of this accessory
+     */
+    public String getName()
+    {
         return name;
     }
 
-    public String getData() {
+    /**
+     * @return The data associated with this accessory
+     */
+    public String getData()
+    {
         return data;
     }
 
-    public boolean isEnabled() {
+    /**
+     * @return Whether or not this accessory is registered into the game
+     */
+    public boolean isEnabled()
+    {
         return enabled;
     }
 
-    public boolean isHidden() {
+    /**
+     * @return Whether or not this accessory is hidden from normal users in-game
+     */
+    public boolean isHidden()
+    {
         return hidden;
     }
 
-    public String getImageURL(){
-        return BFJ.URLPrefix +  "/accessories/" + ID + ".png";
+    /**
+     * @return A link to an online icon image
+     */
+    public String getImageURL()
+    {
+        return BFJ.URLPrefix + "/accessories/" + this.id + ".png";
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o) return true;
+        if (!(o instanceof BFAccessory)) return false;
+        BFAccessory that = (BFAccessory) o;
+        return this.id == that.id && this.typeId == that.typeId;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(this.id, this.typeId);
+    }
+
+    @Override
+    public String toString()
+    {
+        return "BFAccessory{" +
+                "id=" + this.id +
+                ", typeId=" + this.typeId +
+                ", name='" + this.name + '\'' +
+                ", data='" + this.data + '\'' +
+                ", enabled=" + this.enabled +
+                ", hidden=" + this.hidden +
+                '}';
     }
 }

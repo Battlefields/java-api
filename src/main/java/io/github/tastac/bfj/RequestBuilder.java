@@ -1,5 +1,6 @@
 package io.github.tastac.bfj;
 
+@Deprecated
 public class RequestBuilder {
 
     private StringBuilder requestTail = new StringBuilder();

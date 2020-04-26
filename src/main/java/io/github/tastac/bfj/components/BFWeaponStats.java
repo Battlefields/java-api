@@ -1,5 +1,7 @@
 package io.github.tastac.bfj.components;
 
+import java.util.Objects;
+
 public class BFWeaponStats {
 
     private int ID;
@@ -40,5 +42,34 @@ public class BFWeaponStats {
 
     public int getShotsHit() {
         return shotsHit;
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o) return true;
+        if (!(o instanceof BFWeaponStats)) return false;
+        BFWeaponStats that = (BFWeaponStats) o;
+        return this.ID == that.ID;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(this.ID);
+    }
+
+    @Override
+    public String toString()
+    {
+        // TODO add objects instead of ids
+        return "BFWeaponStats{" +
+                "id=" + this.ID +
+                ", matchID=" + this.matchID +
+                ", playerID=" + this.playerID +
+                ", weaponID=" + this.weaponID +
+                ", shotsFired=" + this.shotsFired +
+                ", shotsHit=" + this.shotsHit +
+                '}';
     }
 }
