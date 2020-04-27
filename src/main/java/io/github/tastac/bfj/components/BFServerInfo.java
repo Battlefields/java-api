@@ -8,19 +8,24 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * <p>Information about the server that has been queried from the Battlefields API.</p>
+ *
+ * @author Ocelot
+ */
 public class BFServerInfo
 {
-    private String ip;
-    private int port;
-    private String motd;
-    private int onlinePlayers;
-    private int maxPlayers;
-    private String[] onlinePlayerNames;
-    private String version;
-    private boolean online;
-    private int protocol;
-    private String hostname;
-    private String icon;
+    private final String ip;
+    private final int port;
+    private final String motd;
+    private final int onlinePlayers;
+    private final int maxPlayers;
+    private final String[] onlinePlayerNames;
+    private final String version;
+    private final boolean online;
+    private final int protocol;
+    private final String hostname;
+    private final String icon;
 
     private BFServerInfo(String ip, int port, String motd, int onlinePlayers, int maxPlayers, String[] onlinePlayerNames, String version, boolean online, int protocol, String hostname, String icon)
     {

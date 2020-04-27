@@ -3,67 +3,87 @@ package io.github.tastac.bfj.components;
 import io.github.tastac.bfj.DataRetriever;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * <p>Information about a player in-game that has been queried from the Battlefields API.</p>
+ *
+ * @author Tastac
+ */
 public class BFPlayer
 {
+    private final int id;
+    private final String uuid;
+    private final String username;
+    private final String lastSeen;
 
-    private int ID;
-    private String uuid;
-    private String username;
-    private String lastSeen;
-
-    public BFPlayer(int ID, String uuid, String username, String lastSeen)
+    public BFPlayer(int id, String uuid, String username, String lastSeen)
     {
-        this.ID = ID;
+        this.id = id;
         this.uuid = uuid;
         this.username = username;
         this.lastSeen = lastSeen;
     }
 
-    //TODO add documentation to all these methods
-
-    public int getID()
+    /**
+     * @return The id of this specific player. Separate from {@link #getUUID()}
+     */
+    public int getId()
     {
-        return ID;
+        return id;
     }
 
+    /**
+     * @return The universally unique identifier of this player
+     */
     public String getUUID()
     {
         return uuid;
     }
 
+    /**
+     * @return The username of this player
+     */
     public String getUsername()
     {
         return username;
     }
 
+    /**
+     * @return The last time this player was seen on the server
+     */
     public String getLastSeen()
     {
         return lastSeen;
     }
 
+    @Deprecated
     public int[] getMatchIDs() { return DataRetriever.getMatchesContainingPlayer(this); }
 
+    @Deprecated
     public BFKill[] getKills() { return DataRetriever.getKillsByBFPlayerSource(this); }
 
+    @Deprecated
     public int getTotalKills() { return DataRetriever.getKillTotalFromPlayer(this); }
 
+    @Deprecated
     public int getTotalWins() { return DataRetriever.getWinsTotalFromPlayer(this); }
 
+    @Deprecated
     public int getTotalDeaths() { return getMatchIDs().length - getTotalWins(); }
 
+    @Deprecated
     public int getRank()
     {
         java.util.Map<BFPlayer, Integer> scoreMap = DataRetriever.getScoreMap();
         List<BFPlayer> list = new ArrayList<>(scoreMap.keySet());
-        Collections.sort(list, (a, b) -> scoreMap.get(b) - scoreMap.get(a));
+        list.sort((a, b) -> scoreMap.get(b) - scoreMap.get(a));
 
         return list.indexOf(this) + 1;
     }
 
+    @Deprecated
     public float getKDRatio()
     {
         float kills = getTotalKills();
@@ -85,20 +105,20 @@ public class BFPlayer
         if (this == o) return true;
         if (!(o instanceof BFPlayer)) return false;
         BFPlayer bfPlayer = (BFPlayer) o;
-        return this.ID == bfPlayer.ID && this.uuid.equals(bfPlayer.uuid);
+        return this.id == bfPlayer.id && this.uuid.equals(bfPlayer.uuid);
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash(this.ID, this.uuid);
+        return Objects.hash(this.id, this.uuid);
     }
 
     @Override
     public String toString()
     {
         return "BFPlayer{" +
-                "id=" + this.ID +
+                "id=" + this.id +
                 ", uuid='" + this.uuid + '\'' +
                 ", username='" + this.username + '\'' +
                 ", lastSeen='" + this.lastSeen + '\'' +

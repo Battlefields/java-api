@@ -22,7 +22,6 @@ import java.util.concurrent.Executors;
 @Deprecated
 public class DataRetriever
 {
-
     private static final CloseableHttpClient httpClient = HttpClients.createDefault();
     private static final String apiURL = "https://api.battlefieldsmc.net/api/?type=";
     private static final DateTimeFormatter matchDateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -175,12 +174,12 @@ public class DataRetriever
     public static BFWeaponStats[] getWeaponStatsForPlayer(BFPlayer player, BFWeapon weapon)
     {
         RequestBuilder rb = new RequestBuilder("weapon_stats");
-        rb.addSearchQuery("player_id", Integer.toString(player.getID()));
+        rb.addSearchQuery("player_id", Integer.toString(player.getId()));
         rb.addSearchQuery("weapon_id", Integer.toString(weapon.getId()));
         return getWeaponStatsFromJson(getJSONFromRequestBuilder(rb));
     }
 
-    public static BFWeaponStats[] getWeaponStatsFromBFPlayer(BFPlayer player) { return getWeaponStatsFromJson(getJSONFromQuery("weapon_stats", "player_id", Integer.toString(player.getID()))); }
+    public static BFWeaponStats[] getWeaponStatsFromBFPlayer(BFPlayer player) { return getWeaponStatsFromJson(getJSONFromQuery("weapon_stats", "player_id", Integer.toString(player.getId()))); }
 
     public static BFWeaponStats[] getWeaponStatsFromWeapon(BFWeapon weapon) { return getWeaponStatsFromJson(getJSONFromQuery("weapon_stats", "weapon_id", Integer.toString(weapon.getId()))); }
 
@@ -225,9 +224,9 @@ public class DataRetriever
 
     public static BFKill[] getKillsByTargetID(int targetID) { return getKillObjFromJson(getJSONFromQuery("match_kills", "target_player", Integer.toString(targetID))); }
 
-    public static BFKill[] getKillsByBFPlayerSource(BFPlayer sourcePlayer) { return getKillsBySourceID(sourcePlayer.getID()); }
+    public static BFKill[] getKillsByBFPlayerSource(BFPlayer sourcePlayer) { return getKillsBySourceID(sourcePlayer.getId()); }
 
-    public static BFKill[] getKillsByBFPlayerTarget(BFPlayer targetPlayer) { return getKillsBySourceID(targetPlayer.getID()); }
+    public static BFKill[] getKillsByBFPlayerTarget(BFPlayer targetPlayer) { return getKillsBySourceID(targetPlayer.getId()); }
 
     public static BFKill[] getAllKills() { return getKillObjFromJson(getJSONFromTable("match_kills")); }
 
@@ -416,11 +415,9 @@ public class DataRetriever
 
     public static BFMatch getMatchFromNumber(int number) { return getMatchesFromJson(getJSONFromQuery("matches", "number", Integer.toString(number)))[0]; }
 
-    public static BFMatch[] getMatchesFromWinningPlayer(BFPlayer player) { return getMatchesFromJson(getJSONFromQuery("matches", "winning_player_id", Integer.toString(player.getID()))); }
+    public static BFMatch[] getMatchesFromWinningPlayer(BFPlayer player) { return getMatchesFromJson(getJSONFromQuery("matches", "winning_player_id", Integer.toString(player.getId()))); }
 
     public static BFMatch[] getAllMatches() { return getMatchesFromJson(getJSONFromTable("matches")); }
-
-    ;
 
     // ########## PARTICIPANT MATCHES ##########
 
@@ -463,7 +460,7 @@ public class DataRetriever
         }
     }
 
-    public static int[] getMatchesContainingPlayer(BFPlayer player) { return getPMatchesFromJson(getJSONFromQuery("match_participants", "player_id", Integer.toString(player.getID()))); }
+    public static int[] getMatchesContainingPlayer(BFPlayer player) { return getPMatchesFromJson(getJSONFromQuery("match_participants", "player_id", Integer.toString(player.getId()))); }
 
     public static int[] getPlayersInMatch(BFMatch match) { return getMPlayersFromJson(getJSONFromQuery("match_participants", "match_id", Integer.toString(match.getId()))); }
 
@@ -542,8 +539,8 @@ public class DataRetriever
         try
         {
             return getKillObjFromJson(getJSONFromRequestBuilder(new RequestBuilder("match_kills")
-                    .addSearchQuery("source_player", Integer.toString(source.getID()))
-                    .addSearchQuery("target_player", Integer.toString(target.getID())))
+                    .addSearchQuery("source_player", Integer.toString(source.getId()))
+                    .addSearchQuery("target_player", Integer.toString(target.getId())))
                     .getAsJsonArray());
         }
         catch (IllegalStateException e)

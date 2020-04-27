@@ -1,7 +1,9 @@
 package io.github.tastac.bfj;
 
+import io.github.tastac.bfj.components.BFKill;
 import io.github.tastac.bfj.components.BFServerInfo;
 import io.github.tastac.bfj.components.BFWeapon;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
 import java.util.concurrent.ExecutorService;
@@ -83,7 +85,73 @@ public interface BattlefieldsAPI extends AutoCloseable
     BFServerInfo getServerInfo();
 
     /**
-     * <p>Fetches information about the weapon with the specified id from the API.</p>
+     * <p>Fetches information about kills with the specified queries.</p>
+     * <p>This method is asynchronous and will call the provided handler when the value is received.</p>
+     *
+     * @param queries The filter to use when searching for data
+     * @param handler The handler that will receive the result
+     */
+    default void requestKills(Consumer<Pair<String, Integer>[]> handler, String... queries)
+    {
+        this.getExecutor().execute(() -> handler.accept(this.getKills(queries)));
+    }
+
+    /**
+     * <p>Fetches information about kills with the specified queries.</p>
+     * <p>This method is asynchronous and the received value is indicated to exist at some point in the future.</p>
+     *
+     * @param queries The filter to use when searching for data
+     * @return The value that will exist at some point in the future
+     */
+    default Future<Pair<String, Integer>[]> requestKills(String... queries)
+    {
+        return this.getExecutor().submit(() -> this.getKills(queries));
+    }
+
+    /**
+     * <p>Fetches information about kills with the specified queries.</p>
+     * <p>This method is not asynchronous and will block code execution until the value has been received.</p>
+     *
+     * @param queries The filter to use when searching for data
+     * @return The weapon information or null if the API request failed
+     */
+    Pair<String, Integer>[] getKills(String... queries);
+
+    /**
+     * <p>Fetches information about wins with the specified queries.</p>
+     * <p>This method is asynchronous and will call the provided handler when the value is received.</p>
+     *
+     * @param queries The filter to use when searching for data
+     * @param handler The handler that will receive the result
+     */
+    default void requestWins(Consumer<Pair<String, Integer>[]> handler, String... queries)
+    {
+        this.getExecutor().execute(() -> handler.accept(this.getWins(queries)));
+    }
+
+    /**
+     * <p>Fetches information about wins with the specified queries.</p>
+     * <p>This method is asynchronous and the received value is indicated to exist at some point in the future.</p>
+     *
+     * @param queries The filter to use when searching for data
+     * @return The value that will exist at some point in the future
+     */
+    default Future<Pair<String, Integer>[]> requestWins(String... queries)
+    {
+        return this.getExecutor().submit(() -> this.getWins(queries));
+    }
+
+    /**
+     * <p>Fetches information about wins with the specified queries.</p>
+     * <p>This method is not asynchronous and will block code execution until the value has been received.</p>
+     *
+     * @param queries The filter to use when searching for data
+     * @return The weapon information or null if the API request failed
+     */
+    Pair<String, Integer>[] getWins(String... queries);
+
+    /**
+     * <p>Fetches information about weapons with the specified queries.</p>
      * <p>This method is asynchronous and will call the provided handler when the value is received.</p>
      *
      * @param queries The filter to use when searching for data
@@ -95,7 +163,7 @@ public interface BattlefieldsAPI extends AutoCloseable
     }
 
     /**
-     * <p>Fetches information about the weapon with the specified id from the API.</p>
+     * <p>Fetches information about weapons with the specified queries.</p>
      * <p>This method is asynchronous and the received value is indicated to exist at some point in the future.</p>
      *
      * @param queries The filter to use when searching for data
@@ -107,7 +175,7 @@ public interface BattlefieldsAPI extends AutoCloseable
     }
 
     /**
-     * <p>Fetches information about the weapon with the specified id from the API.</p>
+     * <p>Fetches information about weapons with the specified queries.</p>
      * <p>This method is not asynchronous and will block code execution until the value has been received.</p>
      *
      * @param queries The filter to use when searching for data

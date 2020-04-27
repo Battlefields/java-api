@@ -1,8 +1,11 @@
 package io.github.tastac.bfj;
 
 import com.google.gson.*;
+import io.github.tastac.bfj.components.BFKill;
 import io.github.tastac.bfj.components.BFServerInfo;
 import io.github.tastac.bfj.components.BFWeapon;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -135,6 +138,60 @@ public class BattlefieldsAPIImpl implements BattlefieldsAPI
         this.timeStamps.put("serverInfo", System.currentTimeMillis());
         this.cache.put("serverInfo", serverInfo);
         return serverInfo;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public Pair<String, Integer>[] getKills(String... queries)
+    {
+        String query = resolveQueries(queries);
+        if (this.isCacheValid("kills-" + query))
+            return (Pair<String, Integer>[]) this.cache.get("kills-" + query);
+        Pair<String, Integer>[] kills;
+        try
+        {
+            JsonArray jsonArray = requestDetail(getRequestUrl(BattlefieldsAPITable.KILLS, query));
+            kills = new Pair[jsonArray.size()];
+            for(int i = 0; i < jsonArray.size(); i++){
+                JsonObject object = jsonArray.get(i).getAsJsonObject();
+                kills[i] = new ImmutablePair<>(object.get("uuid").getAsString(), object.get("kills").getAsInt());
+            }
+        }
+        catch (Exception e)
+        {
+            this.exceptionConsumer.accept(e);
+            kills = new Pair[0];
+        }
+        this.timeStamps.put("kills-" + query, System.currentTimeMillis());
+        this.cache.put("kills-" + query, kills);
+        return kills;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public Pair<String, Integer>[] getWins(String... queries)
+    {
+        String query = resolveQueries(queries);
+        if (this.isCacheValid("wins-" + query))
+            return (Pair<String, Integer>[]) this.cache.get("wins-" + query);
+        Pair<String, Integer>[] wins;
+        try
+        {
+            JsonArray jsonArray = requestDetail(getRequestUrl(BattlefieldsAPITable.WINS, query));
+            wins = new Pair[jsonArray.size()];
+            for(int i = 0; i < jsonArray.size(); i++){
+                JsonObject object = jsonArray.get(i).getAsJsonObject();
+                wins[i] = new ImmutablePair<>(object.get("uuid").getAsString(), object.get("wins").getAsInt());
+            }
+        }
+        catch (Exception e)
+        {
+            this.exceptionConsumer.accept(e);
+            wins = new Pair[0];
+        }
+        this.timeStamps.put("wins-" + query, System.currentTimeMillis());
+        this.cache.put("wins-" + query, wins);
+        return wins;
     }
 
     @Override

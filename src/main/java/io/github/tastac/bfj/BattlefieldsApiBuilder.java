@@ -10,7 +10,7 @@ import java.util.function.Consumer;
  *
  * @author Ocelot
  */
-public class BattlefieldsApiBuilder
+public class BattlefieldsAPIBuilder
 {
     private ExecutorService executor;
     private Consumer<Exception> exceptionConsumer;
@@ -19,7 +19,7 @@ public class BattlefieldsApiBuilder
     private long cacheTime;
     private TimeUnit cacheTimeUnit;
 
-    public BattlefieldsApiBuilder()
+    public BattlefieldsAPIBuilder()
     {
         this.executor = null;
         this.exceptionConsumer = Exception::printStackTrace;
@@ -34,7 +34,7 @@ public class BattlefieldsApiBuilder
      *
      * @param executor The new executor to use
      */
-    public BattlefieldsApiBuilder setExecutor(ExecutorService executor)
+    public BattlefieldsAPIBuilder setExecutor(ExecutorService executor)
     {
         this.executor = executor;
         return this;
@@ -45,7 +45,7 @@ public class BattlefieldsApiBuilder
      *
      * @param exceptionConsumer The consumer that handles the exception
      */
-    public BattlefieldsApiBuilder setExceptionConsumer(Consumer<Exception> exceptionConsumer)
+    public BattlefieldsAPIBuilder setExceptionConsumer(Consumer<Exception> exceptionConsumer)
     {
         this.exceptionConsumer = exceptionConsumer;
         return this;
@@ -57,7 +57,7 @@ public class BattlefieldsApiBuilder
      * @param timeout  The time to wait
      * @param timeUnit The unit timeout is provided in
      */
-    public BattlefieldsApiBuilder setShutdownTimeout(long timeout, TimeUnit timeUnit)
+    public BattlefieldsAPIBuilder setShutdownTimeout(long timeout, TimeUnit timeUnit)
     {
         if (timeout < 0)
             throw new IllegalArgumentException("Timeout must be at least 0");
@@ -72,7 +72,7 @@ public class BattlefieldsApiBuilder
      * @param cacheTime The time to cache data
      * @param timeUnit  The unit cacheTime is provided in
      */
-    public BattlefieldsApiBuilder setCacheTime(long cacheTime, TimeUnit timeUnit)
+    public BattlefieldsAPIBuilder setCacheTime(long cacheTime, TimeUnit timeUnit)
     {
         if (cacheTime < 0)
             throw new IllegalArgumentException("Cache Time must be at least 0");

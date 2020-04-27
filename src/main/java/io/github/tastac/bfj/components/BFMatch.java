@@ -4,6 +4,11 @@ import io.github.tastac.bfj.DataRetriever;
 
 import java.util.Objects;
 
+/**
+ * <p>Information about a match in-game that has been queried from the Battlefields API.</p>
+ *
+ * @author Tastac
+ */
 public class BFMatch
 {
     private final int id;
