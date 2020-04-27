@@ -66,27 +66,11 @@ public class BFKill
     }
 
     /**
-     * @return The match this kill took place in
-     */
-    public BFMatch getMatch()
-    {
-        return DataRetriever.getMatchFromID(this.matchId);
-    }
-
-    /**
      * @return The id of the player that killed the target player
      */
     public int getSourcePlayerId()
     {
         return sourcePlayerId;
-    }
-
-    /**
-     * @return The player that killed the target player
-     */
-    public BFPlayer getSourcePlayer()
-    {
-        return DataRetriever.getPlayerByID(this.sourcePlayerId);
     }
 
     /**
@@ -98,27 +82,11 @@ public class BFKill
     }
 
     /**
-     * @return The player that was killed by the source player
-     */
-    public BFPlayer getTargetPlayer()
-    {
-        return DataRetriever.getPlayerByID(targetPlayerId);
-    }
-
-    /**
      * @return The id of the weapon used to kill the target player
      */
     public int getWeaponId()
     {
         return weaponId;
-    }
-
-    /**
-     * @return The weapon used to kill the target player
-     */
-    public BFWeapon getWeapon()
-    {
-        return DataRetriever.getWeaponByID(this.weaponId);
     }
 
     /**

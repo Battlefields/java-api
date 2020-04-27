@@ -1,5 +1,6 @@
 package io.github.tastac.bfj.components;
 
+import com.google.gson.annotations.SerializedName;
 import io.github.tastac.bfj.DataRetriever;
 
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ public class BFPlayer
     private final int id;
     private final String uuid;
     private final String username;
+    @SerializedName("last_seen")
     private final String lastSeen;
 
     public BFPlayer(int id, String uuid, String username, String lastSeen)
@@ -56,47 +58,6 @@ public class BFPlayer
     public String getLastSeen()
     {
         return lastSeen;
-    }
-
-    @Deprecated
-    public int[] getMatchIDs() { return DataRetriever.getMatchesContainingPlayer(this); }
-
-    @Deprecated
-    public BFKill[] getKills() { return DataRetriever.getKillsByBFPlayerSource(this); }
-
-    @Deprecated
-    public int getTotalKills() { return DataRetriever.getKillTotalFromPlayer(this); }
-
-    @Deprecated
-    public int getTotalWins() { return DataRetriever.getWinsTotalFromPlayer(this); }
-
-    @Deprecated
-    public int getTotalDeaths() { return getMatchIDs().length - getTotalWins(); }
-
-    @Deprecated
-    public int getRank()
-    {
-        java.util.Map<BFPlayer, Integer> scoreMap = DataRetriever.getScoreMap();
-        List<BFPlayer> list = new ArrayList<>(scoreMap.keySet());
-        list.sort((a, b) -> scoreMap.get(b) - scoreMap.get(a));
-
-        return list.indexOf(this) + 1;
-    }
-
-    @Deprecated
-    public float getKDRatio()
-    {
-        float kills = getTotalKills();
-        float deaths = getMatchIDs().length - getTotalWins();
-
-        if (deaths <= 0)
-        {
-            return 0f;
-        }
-        else
-        {
-            return kills / deaths;
-        }
     }
 
     @Override

@@ -1,25 +1,20 @@
 import io.github.tastac.bfj.BattlefieldsAPI;
 import io.github.tastac.bfj.BattlefieldsAPIBuilder;
-import io.github.tastac.bfj.components.BFKill;
-import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 public class ApiTest
 {
-    private static void makeRequests(BattlefieldsAPI api) throws ExecutionException, InterruptedException
+    private static void makeRequests(BattlefieldsAPI api) throws InterruptedException, ExecutionException
     {
-        //        System.out.println(api.getServerInfo());
-        //        System.out.println(api.getWeaponById(7));
-
-        Future<Pair<String, Integer>[]> killsFuture = api.requestKills();
-        Future<Pair<String, Integer>[]> winsFuture = api.requestWins();
-
-        System.out.println("Most Kills: " + Arrays.stream(killsFuture.get()).max(Comparator.comparingInt(Pair::getRight)).orElse(null));
-        System.out.println("Most Wins: " + Arrays.stream(winsFuture.get()).max(Comparator.comparingInt(Pair::getRight)).orElse(null));
+        System.out.println("Weapons: " + Arrays.toString(api.requestWeapons().get()));
+        System.out.println("Accessories: " + Arrays.toString(api.requestAccessories().get()));
+        System.out.println("Accessory Types: " + Arrays.toString(api.requestAccessoryTypes().get()));
+        System.out.println("Linked Discords: " + Arrays.toString(api.requestLinkedDiscord().get()));
+        System.out.println("Owned Emotes: " + Arrays.toString(api.requestOwnedEmotes().get()));
+        System.out.println("Emotes: " + Arrays.toString(api.requestEmotes().get()));
+        System.out.println("Weapon Stats: " + Arrays.toString(api.requestWeaponStats("match_id=19").get()));
     }
 
     public static void main(String[] args) throws Exception

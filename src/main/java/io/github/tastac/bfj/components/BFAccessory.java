@@ -12,8 +12,6 @@ import java.util.Objects;
  */
 public class BFAccessory
 {
-    // TODO test that this actually works
-
     private final int id;
     @SerializedName("accessory_type")
     private final int typeId;

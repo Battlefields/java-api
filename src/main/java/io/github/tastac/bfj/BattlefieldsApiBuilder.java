@@ -23,7 +23,7 @@ public class BattlefieldsAPIBuilder
     {
         this.executor = null;
         this.exceptionConsumer = Exception::printStackTrace;
-        this.shutdownTimeout = 10;
+        this.shutdownTimeout = 30;
         this.shutdownTimeoutUnit = TimeUnit.SECONDS;
         this.cacheTime = 5;
         this.cacheTimeUnit = TimeUnit.MINUTES;
