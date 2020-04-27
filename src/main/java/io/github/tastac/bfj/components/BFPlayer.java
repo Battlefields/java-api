@@ -1,10 +1,7 @@
 package io.github.tastac.bfj.components;
 
 import com.google.gson.annotations.SerializedName;
-import io.github.tastac.bfj.DataRetriever;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 /**

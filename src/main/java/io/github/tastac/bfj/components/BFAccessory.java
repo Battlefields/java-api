@@ -83,7 +83,7 @@ public class BFAccessory
      */
     public String getImageURL()
     {
-        return BFJ.URLPrefix + "/accessories/" + this.id + ".png";
+        return BFJ.BF_ICONS_URL + "/accessories/" + this.id + ".png";
     }
 
     @Override
