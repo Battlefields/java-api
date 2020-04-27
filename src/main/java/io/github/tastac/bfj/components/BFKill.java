@@ -1,6 +1,6 @@
 package io.github.tastac.bfj.components;
 
-import com.sun.javafx.geom.Vec3d;
+import com.google.gson.annotations.SerializedName;
 import io.github.tastac.bfj.DataRetriever;
 
 import java.util.Objects;
@@ -13,22 +13,40 @@ import java.util.Objects;
 public class BFKill
 {
     private final int id;
+    @SerializedName("match_id")
     private final int matchId;
+    @SerializedName("source_player")
     private final int sourcePlayerId;
+    @SerializedName("target_player")
     private final int targetPlayerId;
+    @SerializedName("weapon")
     private final int weaponId;
-    private final Vec3d sourcePos;
-    private final Vec3d targetPos;
+    @SerializedName("source_x")
+    private final double sourcePosX;
+    @SerializedName("source_y")
+    private final double sourcePosY;
+    @SerializedName("source_z")
+    private final double sourcePosZ;
+    @SerializedName("target_x")
+    private final double targetPosX;
+    @SerializedName("target_y")
+    private final double targetPosY;
+    @SerializedName("target_z")
+    private final double targetPosZ;
 
-    public BFKill(int id, int matchId, int sourcePlayerId, int targetPlayerId, int weaponId, Vec3d sourcePos, Vec3d targetPos)
+    public BFKill(int id, int matchId, int sourcePlayerId, int targetPlayerId, int weaponId, double sourcePosX, double sourcePosY, double sourcePosZ, double targetPosX, double targetPosY, double targetPosZ)
     {
         this.id = id;
         this.matchId = matchId;
         this.sourcePlayerId = sourcePlayerId;
         this.targetPlayerId = targetPlayerId;
         this.weaponId = weaponId;
-        this.sourcePos = sourcePos;
-        this.targetPos = targetPos;
+        this.sourcePosX = sourcePosX;
+        this.sourcePosY = sourcePosY;
+        this.sourcePosZ = sourcePosZ;
+        this.targetPosX = targetPosX;
+        this.targetPosY = targetPosY;
+        this.targetPosZ = targetPosZ;
     }
 
     /**
@@ -104,19 +122,51 @@ public class BFKill
     }
 
     /**
-     * @return Exactly where the source player was when the kill took place
+     * @return The exact x position where the source player was when the kill took place
      */
-    public Vec3d getSourcePos()
+    public double getSourcePosX()
     {
-        return sourcePos;
+        return sourcePosX;
     }
 
     /**
-     * @return Exactly where the target player was when the kill took place
+     * @return The exact y position where the source player was when the kill took place
      */
-    public Vec3d getTargetPos()
+    public double getSourcePosY()
     {
-        return targetPos;
+        return sourcePosY;
+    }
+
+    /**
+     * @return The exact z position where the source player was when the kill took place
+     */
+    public double getSourcePosZ()
+    {
+        return sourcePosZ;
+    }
+
+    /**
+     * @return The exact x position where the target player was when the kill took place
+     */
+    public double getTargetPosX()
+    {
+        return targetPosX;
+    }
+
+    /**
+     * @return The exact y position where the target player was when the kill took place
+     */
+    public double getTargetPosY()
+    {
+        return targetPosY;
+    }
+
+    /**
+     * @return The exact z position where the target player was when the kill took place
+     */
+    public double getTargetPosZ()
+    {
+        return targetPosZ;
     }
 
     @Override
@@ -139,12 +189,12 @@ public class BFKill
     {
         return "BFKill{" +
                 "id=" + this.id +
-                ", matchId=" + this.matchId +
-                ", sourcePlayerId=" + this.sourcePlayerId +
-                ", targetPlayerId=" + targetPlayerId +
-                ", weaponId=" + this.weaponId +
-                ", sourcePos=" + this.sourcePos +
-                ", targetPos=" + this.targetPos +
+                ", match_id=" + this.matchId +
+                ", source_player=" + this.sourcePlayerId +
+                ", target_player=" + targetPlayerId +
+                ", weapon=" + this.weaponId +
+                ", sourcePos=(" + this.sourcePosX + ", " + this.sourcePosY + ", " + this.sourcePosZ + ")" +
+                ", targetPos=(" + this.targetPosX + ", " + this.targetPosY + ", " + this.targetPosZ + ")" +
                 '}';
     }
 }

@@ -24,8 +24,6 @@ public class BFWeapon
         this.itemName = itemName;
     }
 
-    //TODO add documentation to all these methods
-
     /**
      * @return The id of this specific weapon
      */
@@ -70,8 +68,8 @@ public class BFWeapon
     {
         return "BFWeapon{" +
                 "id=" + this.id +
-                ", itemId=" + this.itemId +
-                ", itemName='" + this.itemName + '\'' +
+                ", item_id=" + this.itemId +
+                ", item_name='" + this.itemName + '\'' +
                 '}';
     }
 }

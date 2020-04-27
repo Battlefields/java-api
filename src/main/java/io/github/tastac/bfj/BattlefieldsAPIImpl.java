@@ -3,6 +3,7 @@ package io.github.tastac.bfj;
 import com.google.gson.*;
 import io.github.tastac.bfj.components.BFServerInfo;
 import io.github.tastac.bfj.components.BFWeapon;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -68,14 +69,19 @@ public class BattlefieldsAPIImpl implements BattlefieldsAPI
         return requestObject.get("detail").getAsJsonArray();
     }
 
-    private static String getRequestUrl(String table, String dataId, String query)
+    private static String getRequestUrl(BattlefieldsAPITable table, String query)
     {
-        return String.format(BFJ.BF_API_URL + "?type=%s&%s=%s", table, dataId, query);
+        return String.format(BFJ.BF_API_URL + "?type=%s%s", table.getTable(), query);
     }
 
-    private static String getRequestUrl(String table)
+    private static String resolveQueries(String[] queries)
     {
-        return String.format(BFJ.BF_API_URL + "?type=%s", table);
+        if (queries.length == 0)
+            return "";
+        StringBuilder builder = new StringBuilder();
+        for (String query : queries)
+            builder.append("&").append(StringEscapeUtils.escapeJava(query));
+        return builder.toString();
     }
 
     private boolean isCacheValid(String field)
@@ -132,64 +138,35 @@ public class BattlefieldsAPIImpl implements BattlefieldsAPI
     }
 
     @Override
-    public BFWeapon getWeaponById(int id)
+    public BFWeapon[] getWeapons(String... queries)
     {
-        if (this.isCacheValid("weaponById-" + id))
-            return (BFWeapon) this.cache.get("weaponById-" + id);
-        BFWeapon weapon;
+        String query = resolveQueries(queries);
+        if (this.isCacheValid("weapons-" + query))
+            return (BFWeapon[]) this.cache.get("weaponById-" + query);
+        BFWeapon[] weapons;
         try
         {
-            weapon = GSON.fromJson(requestDetail(getRequestUrl("weapons", "id", Integer.toString(id))).get(0), BFWeapon.class);
+            weapons = GSON.fromJson(requestDetail(getRequestUrl(BattlefieldsAPITable.WEAPONS, query)), BFWeapon[].class);
         }
         catch (Exception e)
         {
             this.exceptionConsumer.accept(e);
-            weapon = null;
+            weapons = new BFWeapon[0];
         }
-        this.timeStamps.put("weaponById-" + id, System.currentTimeMillis());
-        this.cache.put("weaponById-" + id, weapon);
-        return weapon;
+        this.timeStamps.put("weapons-" + query, System.currentTimeMillis());
+        this.cache.put("weapons-" + query, weapons);
+        return weapons;
     }
 
-    @Override
-    public BFWeapon getWeaponByItemId(int itemId)
-    {
-        if (this.isCacheValid("weaponByItemId-" + itemId))
-            return (BFWeapon) this.cache.get("weaponByItemId-" + itemId);
-        BFWeapon weapon;
-        try
-        {
-            weapon = GSON.fromJson(requestDetail(getRequestUrl("weapons", "item_id", Integer.toString(itemId))).get(0), BFWeapon.class);
-        }
-        catch (Exception e)
-        {
-            this.exceptionConsumer.accept(e);
-            weapon = null;
-        }
-        this.timeStamps.put("weaponByItemId-" + itemId, System.currentTimeMillis());
-        this.cache.put("weaponByItemId-" + itemId, weapon);
-        return weapon;
-    }
-
-    @Override
-    public BFWeapon getWeaponByItemName(String itemName)
-    {
-        if (this.isCacheValid("weaponByItemName-" + itemName))
-            return (BFWeapon) this.cache.get("weaponByItemName-" + itemName);
-        BFWeapon weapon;
-        try
-        {
-            weapon = GSON.fromJson(requestDetail(getRequestUrl("weapons", "item_name", itemName)).get(0), BFWeapon.class);
-        }
-        catch (Exception e)
-        {
-            this.exceptionConsumer.accept(e);
-            weapon = null;
-        }
-        this.timeStamps.put("weaponByItemName-" + itemName, System.currentTimeMillis());
-        this.cache.put("weaponByItemName-" + itemName, weapon);
-        return weapon;
-    }
+    //    public static BFKill[] getKillsBySourceID(int sourceID) { return getKillObjFromJson(getJSONFromQuery("match_kills", "source_player", Integer.toString(sourceID))); }
+    //
+    //    public static BFKill[] getKillsByTargetID(int targetID) { return getKillObjFromJson(getJSONFromQuery("match_kills", "target_player", Integer.toString(targetID))); }
+    //
+    //    public static BFKill[] getKillsByBFPlayerSource(BFPlayer sourcePlayer) { return getKillsBySourceID(sourcePlayer.getID()); }
+    //
+    //    public static BFKill[] getKillsByBFPlayerTarget(BFPlayer targetPlayer) { return getKillsBySourceID(targetPlayer.getID()); }
+    //
+    //    public static BFKill[] getAllKills() { return getKillObjFromJson(getJSONFromTable("match_kills")); }
 
     @Override
     public ExecutorService getExecutor()

@@ -1,8 +1,8 @@
 import io.github.tastac.bfj.BattlefieldsAPI;
 import io.github.tastac.bfj.BattlefieldsApiBuilder;
-import io.github.tastac.bfj.components.BFServerInfo;
 import io.github.tastac.bfj.components.BFWeapon;
 
+import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -13,13 +13,9 @@ public class ApiTest
         //        System.out.println(api.getServerInfo());
         //        System.out.println(api.getWeaponById(7));
 
-        Future<String> serverStatusFuture = api.requestServerStatus();
-        Future<BFServerInfo> serverInfoFuture = api.requestServerInfo();
-        Future<BFWeapon> weaponFuture = api.requestWeaponByItemName("minecraft:bow");
+        Future<BFWeapon[]> serverStatusFuture = api.requestWeapons("item_name=minecraft:stick");
 
-        System.out.println(serverStatusFuture.get());
-        System.out.println(serverInfoFuture.get());
-        System.out.println(weaponFuture.get());
+        System.out.println("Weapons: " + Arrays.toString(serverStatusFuture.get()));
     }
 
     public static void main(String[] args) throws Exception

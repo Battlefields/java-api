@@ -86,94 +86,34 @@ public interface BattlefieldsAPI extends AutoCloseable
      * <p>Fetches information about the weapon with the specified id from the API.</p>
      * <p>This method is asynchronous and will call the provided handler when the value is received.</p>
      *
+     * @param queries The filter to use when searching for data
      * @param handler The handler that will receive the result
      */
-    default void requestWeaponById(int id, Consumer<BFWeapon> handler)
+    default void requestWeapons(Consumer<BFWeapon[]> handler, String... queries)
     {
-        this.getExecutor().execute(() -> handler.accept(this.getWeaponById(id)));
+        this.getExecutor().execute(() -> handler.accept(this.getWeapons(queries)));
     }
 
     /**
      * <p>Fetches information about the weapon with the specified id from the API.</p>
      * <p>This method is asynchronous and the received value is indicated to exist at some point in the future.</p>
      *
+     * @param queries The filter to use when searching for data
      * @return The value that will exist at some point in the future
      */
-    default Future<BFWeapon> requestWeaponById(int id)
+    default Future<BFWeapon[]> requestWeapons(String... queries)
     {
-        return this.getExecutor().submit(() -> this.getWeaponById(id));
+        return this.getExecutor().submit(() -> this.getWeapons(queries));
     }
 
     /**
      * <p>Fetches information about the weapon with the specified id from the API.</p>
      * <p>This method is not asynchronous and will block code execution until the value has been received.</p>
      *
-     * @param id The id of the weapon to fetch
+     * @param queries The filter to use when searching for data
      * @return The weapon information or null if the API request failed
      */
-    BFWeapon getWeaponById(int id);
-
-    /**
-     * <p>Fetches information about the weapon with the specified item id from the API.</p>
-     * <p>This method is asynchronous and will call the provided handler when the value is received.</p>
-     *
-     * @param handler The handler that will receive the result
-     */
-    default void requestWeaponByItemId(int itemId, Consumer<BFWeapon> handler)
-    {
-        this.getExecutor().execute(() -> handler.accept(this.getWeaponByItemId(itemId)));
-    }
-
-    /**
-     * <p>Fetches information about the weapon with the specified item id from the API.</p>
-     * <p>This method is asynchronous and the received value is indicated to exist at some point in the future.</p>
-     *
-     * @return The value that will exist at some point in the future
-     */
-    default Future<BFWeapon> requestWeaponByItemId(int itemId)
-    {
-        return this.getExecutor().submit(() -> this.getWeaponByItemId(itemId));
-    }
-
-    /**
-     * <p>Fetches information about the weapon with the specified item id from the API.</p>
-     * <p>This method is not asynchronous and will block code execution until the value has been received.</p>
-     *
-     * @param itemId The id of the item used as a weapon to fetch
-     * @return The weapon information or null if the API request failed
-     */
-    BFWeapon getWeaponByItemId(int itemId);
-
-    /**
-     * <p>Fetches information about the weapon with the specified item name from the API.</p>
-     * <p>This method is asynchronous and will call the provided handler when the value is received.</p>
-     *
-     * @param handler The handler that will receive the result
-     */
-    default void requestWeaponByItemName(String itemName, Consumer<BFWeapon> handler)
-    {
-        this.getExecutor().execute(() -> handler.accept(this.getWeaponByItemName(itemName)));
-    }
-
-    /**
-     * <p>Fetches information about the weapon with the specified item name from the API.</p>
-     * <p>This method is asynchronous and the received value is indicated to exist at some point in the future.</p>
-     *
-     * @return The value that will exist at some point in the future
-     */
-    default Future<BFWeapon> requestWeaponByItemName(String itemName)
-    {
-        return this.getExecutor().submit(() -> this.getWeaponByItemName(itemName));
-    }
-
-    /**
-     * <p>Fetches information about the weapon with the specified item name from the API.</p>
-     * <p>This method is not asynchronous and will block code execution until the value has been received.</p>
-     *
-     * @param itemName The name of the item used as a weapon to fetch
-     * @return The weapon information or null if the API request failed
-     */
-    BFWeapon getWeaponByItemName(String itemName);
+    BFWeapon[] getWeapons(String... queries);
 
     /**
      * @return The executor used to make API requests asynchronously

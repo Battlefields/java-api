@@ -108,7 +108,7 @@ public class BFAccessory
     {
         return "BFAccessory{" +
                 "id=" + this.id +
-                ", typeId=" + this.typeId +
+                ", accessory_type=" + this.typeId +
                 ", name='" + this.name + '\'' +
                 ", data='" + this.data + '\'' +
                 ", enabled=" + this.enabled +
