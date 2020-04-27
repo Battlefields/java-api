@@ -15,6 +15,7 @@ public class ApiTest
         System.out.println("Owned Emotes: " + Arrays.toString(api.requestOwnedEmotes().get()));
         System.out.println("Emotes: " + Arrays.toString(api.requestEmotes().get()));
         System.out.println("Weapon Stats: " + Arrays.toString(api.requestWeaponStats("match_id=19").get()));
+        System.out.println("Server Status: " + api.requestServerInfo().get());
     }
 
     public static void main(String[] args) throws Exception
