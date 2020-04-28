@@ -1,69 +1,167 @@
 package io.github.tastac.bfj.components;
 
-import com.sun.javafx.geom.Vec3d;
-import io.github.tastac.bfj.DataRetriever;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.Objects;
 
-public class BFKill {
+/**
+ * <p>Information about an kill in-game that has been queried from the Battlefields API.</p>
+ *
+ * @author Tastac
+ */
+public class BFKill
+{
+    private final int id;
+    @SerializedName("match_id")
+    private final int matchId;
+    @SerializedName("source_player")
+    private final int sourcePlayerId;
+    @SerializedName("target_player")
+    private final int targetPlayerId;
+    @SerializedName("weapon")
+    private final int weaponId;
+    @SerializedName("source_x")
+    private final double sourcePosX;
+    @SerializedName("source_y")
+    private final double sourcePosY;
+    @SerializedName("source_z")
+    private final double sourcePosZ;
+    @SerializedName("target_x")
+    private final double targetPosX;
+    @SerializedName("target_y")
+    private final double targetPosY;
+    @SerializedName("target_z")
+    private final double targetPosZ;
 
-    private int ID;
-    private int matchID;
-    private int sourcePlayer;
-    private int targetPlayer;
-    private Vec3d sourcePos;
-    private Vec3d targetPos;
-    private int weaponID;
-
-    public BFKill(int ID, int matchID, int sourceID, int targetID, Vec3d sourcePos, Vec3d targetPos, int weaponID){
-        this.ID = ID;
-        this.matchID = matchID;
-        this.sourcePlayer = sourceID;
-        this.targetPlayer = targetID;
-        this.sourcePos = sourcePos;
-        this.targetPos = targetPos;
-        this.weaponID = weaponID;
+    public BFKill(int id, int matchId, int sourcePlayerId, int targetPlayerId, int weaponId, double sourcePosX, double sourcePosY, double sourcePosZ, double targetPosX, double targetPosY, double targetPosZ)
+    {
+        this.id = id;
+        this.matchId = matchId;
+        this.sourcePlayerId = sourcePlayerId;
+        this.targetPlayerId = targetPlayerId;
+        this.weaponId = weaponId;
+        this.sourcePosX = sourcePosX;
+        this.sourcePosY = sourcePosY;
+        this.sourcePosZ = sourcePosZ;
+        this.targetPosX = targetPosX;
+        this.targetPosY = targetPosY;
+        this.targetPosZ = targetPosZ;
     }
 
-    public int getID() {
-        return ID;
+    /**
+     * @return The id id this specific kill
+     */
+    public int getId()
+    {
+        return id;
     }
 
-    public BFMatch getMatch() {
-        return DataRetriever.getMatchFromID(matchID);
+    /**
+     * @return The id of the match this kill took place in
+     */
+    public int getMatchId()
+    {
+        return matchId;
     }
 
-    public BFPlayer getSourcePlayer() {
-        return DataRetriever.getPlayerByID(sourcePlayer);
+    /**
+     * @return The id of the player that killed the target player
+     */
+    public int getSourcePlayerId()
+    {
+        return sourcePlayerId;
     }
 
-    public BFPlayer getTargetPlayer() {
-        return DataRetriever.getPlayerByID(targetPlayer);
+    /**
+     * @return The id of the player that was killed by the source player
+     */
+    public int getTargetPlayerId()
+    {
+        return targetPlayerId;
     }
 
-    public Vec3d getSourcePos() {
-        return sourcePos;
+    /**
+     * @return The id of the weapon used to kill the target player
+     */
+    public int getWeaponId()
+    {
+        return weaponId;
     }
 
-    public Vec3d getTargetPos() {
-        return targetPos;
+    /**
+     * @return The exact x position where the source player was when the kill took place
+     */
+    public double getSourcePosX()
+    {
+        return sourcePosX;
     }
 
-    public BFWeapon getWeapon() {
-        return DataRetriever.getWeaponByID(weaponID);
+    /**
+     * @return The exact y position where the source player was when the kill took place
+     */
+    public double getSourcePosY()
+    {
+        return sourcePosY;
+    }
+
+    /**
+     * @return The exact z position where the source player was when the kill took place
+     */
+    public double getSourcePosZ()
+    {
+        return sourcePosZ;
+    }
+
+    /**
+     * @return The exact x position where the target player was when the kill took place
+     */
+    public double getTargetPosX()
+    {
+        return targetPosX;
+    }
+
+    /**
+     * @return The exact y position where the target player was when the kill took place
+     */
+    public double getTargetPosY()
+    {
+        return targetPosY;
+    }
+
+    /**
+     * @return The exact z position where the target player was when the kill took place
+     */
+    public double getTargetPosZ()
+    {
+        return targetPosZ;
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(Object o)
+    {
         if (this == o) return true;
         if (!(o instanceof BFKill)) return false;
-        BFKill bfKill = (BFKill) o;
-        return ID == bfKill.ID &&
-                matchID == bfKill.matchID;
+        BFKill that = (BFKill) o;
+        return this.id == that.id;
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(ID, matchID);
+    public int hashCode()
+    {
+        return Objects.hash(this.id);
+    }
+
+    @Override
+    public String toString()
+    {
+        return "BFKill{" +
+                "id=" + this.id +
+                ", match_id=" + this.matchId +
+                ", source_player=" + this.sourcePlayerId +
+                ", target_player=" + targetPlayerId +
+                ", weapon=" + this.weaponId +
+                ", sourcePos=(" + this.sourcePosX + ", " + this.sourcePosY + ", " + this.sourcePosZ + ")" +
+                ", targetPos=(" + this.targetPosX + ", " + this.targetPosY + ", " + this.targetPosZ + ")" +
+                '}';
     }
 }

@@ -1,67 +1,81 @@
 package io.github.tastac.bfj.components;
 
-import io.github.tastac.bfj.DataRetriever;
-
 import java.util.Objects;
 
-public class BFMatch {
+/**
+ * <p>Information about a match in-game that has been queried from the Battlefields API.</p>
+ *
+ * @author Tastac
+ */
+public class BFMatch
+{
+    private final int id;
+    private final int number;
+    private final String startDate;
+    private final String endDate;
+    private final int winningPlayerId;
 
-    private int ID;
-    private int number;
-    private String startDate;
-    private String endDate;
-    private int winningPlayerID;
-
-    private int[] participatingPlayerIDs;
-    private BFPlayer[] participatingPlayers;
-
-    public BFMatch(int ID, int number, String startDate, String endDate, int winningPlayerID){
-        this.ID = ID;
+    public BFMatch(int id, int number, String startDate, String endDate, int winningPlayerId)
+    {
+        this.id = id;
         this.number = number;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.winningPlayerID = winningPlayerID;
+        this.winningPlayerId = winningPlayerId;
     }
 
-    //TODO add documentation to all these methods
+    /**
+     * @return The id of this specific match
+     */
+    public int getId() { return id; }
 
-    public int getID() { return ID; }
-
+    /**
+     * @return The number of this match
+     */
     public int getNumber() { return number; }
 
+    /**
+     * @return The starting date of this match
+     */
     public String getStartDate() { return startDate; }
 
+    /**
+     * @return The ending date of this match
+     */
     public String getEndDate() { return endDate; }
 
-    public BFPlayer getWinningPlayer() { return DataRetriever.getPlayerByID(winningPlayerID); }
-
-    public int[] getParticipatingPlayerIDs(){
-        if(participatingPlayerIDs == null) DataRetriever.getPlayersInMatch(this);
-        return participatingPlayerIDs;
-    }
-
-    public BFPlayer[] getParticipatingPlayers(){
-        if(participatingPlayerIDs == null) DataRetriever.getPlayersInMatch(this);
-        if(participatingPlayers == null){
-            participatingPlayers = new BFPlayer[participatingPlayerIDs.length];
-            for(int i : participatingPlayerIDs){
-                participatingPlayers[i] = DataRetriever.getPlayerByID(i);
-            }
-        }
-        return participatingPlayers;
+    /**
+     * @return The id of the player that won
+     */
+    public int getWinningPlayerId()
+    {
+        return winningPlayerId;
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(Object o)
+    {
         if (this == o) return true;
         if (!(o instanceof BFMatch)) return false;
         BFMatch bfMatch = (BFMatch) o;
-        return ID == bfMatch.ID &&
-                number == bfMatch.number;
+        return this.id == bfMatch.id;
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(ID, number);
+    public int hashCode()
+    {
+        return Objects.hash(this.id);
+    }
+
+    @Override
+    public String toString()
+    {
+        return "BFMatch{" +
+                "id=" + this.id +
+                ", number=" + this.number +
+                ", startDate='" + this.startDate + '\'' +
+                ", endDate='" + this.endDate + '\'' +
+                ", winningPlayer=" + this.winningPlayerId +
+                '}';
     }
 }
