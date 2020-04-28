@@ -1,12 +1,12 @@
-import io.github.tastac.bfj.BattlefieldsAPI;
-import io.github.tastac.bfj.BattlefieldsAPIBuilder;
+import io.github.tastac.bfj.BattlefieldsApi;
+import io.github.tastac.bfj.BattlefieldsApiBuilder;
 
 import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 
 public class ApiTest
 {
-    private static void makeRequests(BattlefieldsAPI api) throws InterruptedException, ExecutionException
+    private static void makeRequests(BattlefieldsApi api) throws InterruptedException, ExecutionException
     {
         System.out.println("Weapons: " + Arrays.toString(api.requestWeapons().get()));
         System.out.println("Accessories: " + Arrays.toString(api.requestAccessories().get()));
@@ -20,7 +20,7 @@ public class ApiTest
 
     public static void main(String[] args) throws Exception
     {
-        BattlefieldsAPI api = new BattlefieldsAPIBuilder().create();
+        BattlefieldsApi api = new BattlefieldsApiBuilder().create();
 
         long startTime = System.currentTimeMillis();
         makeRequests(api);

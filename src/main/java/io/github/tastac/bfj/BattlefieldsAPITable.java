@@ -5,7 +5,7 @@ package io.github.tastac.bfj;
  *
  * @author Ocelot
  */
-public enum BattlefieldsAPITable
+public enum BattlefieldsApiTable
 {
     KILLS("kills"),
     WINS("wins"),
@@ -24,7 +24,7 @@ public enum BattlefieldsAPITable
 
     private final String table;
 
-    BattlefieldsAPITable(String table)
+    BattlefieldsApiTable(String table)
     {
         this.table = table;
     }

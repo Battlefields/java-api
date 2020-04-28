@@ -15,7 +15,7 @@ import java.util.function.Consumer;
  * @author Ocelot
  */
 @SuppressWarnings("unused")
-public interface BattlefieldsAPI extends AutoCloseable
+public interface BattlefieldsApi extends AutoCloseable
 {
     /**
      * Clears the entire request cache and forces all new requests to access the API.
@@ -28,7 +28,7 @@ public interface BattlefieldsAPI extends AutoCloseable
      *
      * @param handler The handler that will receive the result
      */
-    default void request(Consumer<JsonArray> handler, BattlefieldsAPITable table, String... queries)
+    default void request(Consumer<JsonArray> handler, BattlefieldsApiTable table, String... queries)
     {
         this.getExecutor().execute(() -> handler.accept(this.get(table, queries)));
     }
@@ -39,7 +39,7 @@ public interface BattlefieldsAPI extends AutoCloseable
      *
      * @return The value that will exist at some point in the future
      */
-    default Future<JsonArray> request(BattlefieldsAPITable table, String... queries)
+    default Future<JsonArray> request(BattlefieldsApiTable table, String... queries)
     {
         return this.getExecutor().submit(() -> this.get(table, queries));
     }
@@ -53,7 +53,7 @@ public interface BattlefieldsAPI extends AutoCloseable
      * @return The requested information or null if the API request failed
      */
     @Nullable
-    JsonArray get(BattlefieldsAPITable table, String... queries);
+    JsonArray get(BattlefieldsApiTable table, String... queries);
 
     /**
      * <p>Fetches the server status from the API.</p>

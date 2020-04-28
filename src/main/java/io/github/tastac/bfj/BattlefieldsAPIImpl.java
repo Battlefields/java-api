@@ -13,7 +13,6 @@ import org.apache.http.util.EntityUtils;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -21,11 +20,11 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 /**
- * <p>Internal implementation of {@link BattlefieldsAPI}.</p>
+ * <p>Internal implementation of {@link BattlefieldsApi}.</p>
  *
  * @author Tastac, Ocelot
  */
-public class BattlefieldsAPIImpl implements BattlefieldsAPI
+public class BattlefieldsApiImpl implements BattlefieldsApi
 {
     private static final Gson GSON = new GsonBuilder().registerTypeAdapter(BFServerInfo.class, new BFServerInfo.Deserializer()).create();
     private static final String USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11";
@@ -39,7 +38,7 @@ public class BattlefieldsAPIImpl implements BattlefieldsAPI
     private final Map<String, Long> timeStamps;
     private final Map<String, Object> cache;
 
-    public BattlefieldsAPIImpl(ExecutorService requestPool, Consumer<Exception> exceptionConsumer, long shutdownTimeout, TimeUnit shutdownTimeoutUnit, long cacheTime, TimeUnit cacheTimeUnit)
+    public BattlefieldsApiImpl(ExecutorService requestPool, Consumer<Exception> exceptionConsumer, long shutdownTimeout, TimeUnit shutdownTimeoutUnit, long cacheTime, TimeUnit cacheTimeUnit)
     {
         this.requestPool = requestPool;
         this.exceptionConsumer = exceptionConsumer;
@@ -71,7 +70,7 @@ public class BattlefieldsAPIImpl implements BattlefieldsAPI
         return requestObject.get("detail").getAsJsonArray();
     }
 
-    private static String getRequestUrl(BattlefieldsAPITable table, String query)
+    private static String getRequestUrl(BattlefieldsApiTable table, String query)
     {
         return String.format(BFJ.BF_API_URL + "?type=%s%s", table.getTable(), query);
     }
@@ -100,7 +99,7 @@ public class BattlefieldsAPIImpl implements BattlefieldsAPI
 
     @Nullable
     @Override
-    public JsonArray get(BattlefieldsAPITable table, String... queries)
+    public JsonArray get(BattlefieldsApiTable table, String... queries)
     {
         String query = resolveQueries(queries);
         if (this.isCacheValid("custom-" + query))
@@ -171,7 +170,7 @@ public class BattlefieldsAPIImpl implements BattlefieldsAPI
         Pair<String, Integer>[] kills;
         try
         {
-            JsonArray jsonArray = requestDetail(getRequestUrl(BattlefieldsAPITable.KILLS, query));
+            JsonArray jsonArray = requestDetail(getRequestUrl(BattlefieldsApiTable.KILLS, query));
             kills = new Pair[jsonArray.size()];
             for (int i = 0; i < jsonArray.size(); i++)
             {
@@ -199,7 +198,7 @@ public class BattlefieldsAPIImpl implements BattlefieldsAPI
         Pair<String, Integer>[] wins;
         try
         {
-            JsonArray jsonArray = requestDetail(getRequestUrl(BattlefieldsAPITable.WINS, query));
+            JsonArray jsonArray = requestDetail(getRequestUrl(BattlefieldsApiTable.WINS, query));
             wins = new Pair[jsonArray.size()];
             for (int i = 0; i < jsonArray.size(); i++)
             {
@@ -226,7 +225,7 @@ public class BattlefieldsAPIImpl implements BattlefieldsAPI
         BFPlayer[] players;
         try
         {
-            players = GSON.fromJson(requestDetail(getRequestUrl(BattlefieldsAPITable.PLAYERS, query)), BFPlayer[].class);
+            players = GSON.fromJson(requestDetail(getRequestUrl(BattlefieldsApiTable.PLAYERS, query)), BFPlayer[].class);
         }
         catch (Exception e)
         {
@@ -247,7 +246,7 @@ public class BattlefieldsAPIImpl implements BattlefieldsAPI
         BFMatch[] matches;
         try
         {
-            matches = GSON.fromJson(requestDetail(getRequestUrl(BattlefieldsAPITable.MATCHES, query)), BFMatch[].class);
+            matches = GSON.fromJson(requestDetail(getRequestUrl(BattlefieldsApiTable.MATCHES, query)), BFMatch[].class);
         }
         catch (Exception e)
         {
@@ -269,7 +268,7 @@ public class BattlefieldsAPIImpl implements BattlefieldsAPI
         Pair<String, Integer>[] ownedAccessories;
         try
         {
-            JsonArray jsonArray = requestDetail(getRequestUrl(BattlefieldsAPITable.OWNED_ACCESSORIES, query));
+            JsonArray jsonArray = requestDetail(getRequestUrl(BattlefieldsApiTable.OWNED_ACCESSORIES, query));
             ownedAccessories = new Pair[jsonArray.size()];
             for (int i = 0; i < jsonArray.size(); i++)
             {
@@ -296,7 +295,7 @@ public class BattlefieldsAPIImpl implements BattlefieldsAPI
         BFAccessory[] accessories;
         try
         {
-            accessories = GSON.fromJson(requestDetail(getRequestUrl(BattlefieldsAPITable.ACCESSORIES, query)), BFAccessory[].class);
+            accessories = GSON.fromJson(requestDetail(getRequestUrl(BattlefieldsApiTable.ACCESSORIES, query)), BFAccessory[].class);
         }
         catch (Exception e)
         {
@@ -318,7 +317,7 @@ public class BattlefieldsAPIImpl implements BattlefieldsAPI
         Pair<Integer, String>[] accessoryTypes;
         try
         {
-            JsonArray jsonArray = requestDetail(getRequestUrl(BattlefieldsAPITable.ACCESSORY_TYPES, query));
+            JsonArray jsonArray = requestDetail(getRequestUrl(BattlefieldsApiTable.ACCESSORY_TYPES, query));
             accessoryTypes = new Pair[jsonArray.size()];
             for (int i = 0; i < jsonArray.size(); i++)
             {
@@ -345,7 +344,7 @@ public class BattlefieldsAPIImpl implements BattlefieldsAPI
         BFWeapon[] weapons;
         try
         {
-            weapons = GSON.fromJson(requestDetail(getRequestUrl(BattlefieldsAPITable.WEAPONS, query)), BFWeapon[].class);
+            weapons = GSON.fromJson(requestDetail(getRequestUrl(BattlefieldsApiTable.WEAPONS, query)), BFWeapon[].class);
         }
         catch (Exception e)
         {
@@ -366,7 +365,7 @@ public class BattlefieldsAPIImpl implements BattlefieldsAPI
         BFWeaponStats[] weaponStats;
         try
         {
-            weaponStats = GSON.fromJson(requestDetail(getRequestUrl(BattlefieldsAPITable.WEAPON_STATS, query)), BFWeaponStats[].class);
+            weaponStats = GSON.fromJson(requestDetail(getRequestUrl(BattlefieldsApiTable.WEAPON_STATS, query)), BFWeaponStats[].class);
         }
         catch (Exception e)
         {
@@ -388,7 +387,7 @@ public class BattlefieldsAPIImpl implements BattlefieldsAPI
         Pair<Integer, Integer>[] matchParticipants;
         try
         {
-            JsonArray jsonArray = requestDetail(getRequestUrl(BattlefieldsAPITable.MATCH_PARTICIPANTS, query));
+            JsonArray jsonArray = requestDetail(getRequestUrl(BattlefieldsApiTable.MATCH_PARTICIPANTS, query));
             matchParticipants = new Pair[jsonArray.size()];
             for (int i = 0; i < jsonArray.size(); i++)
             {
@@ -415,7 +414,7 @@ public class BattlefieldsAPIImpl implements BattlefieldsAPI
         BFKill[] matchKills;
         try
         {
-            matchKills = GSON.fromJson(requestDetail(getRequestUrl(BattlefieldsAPITable.MATCH_KILLS, query)), BFKill[].class);
+            matchKills = GSON.fromJson(requestDetail(getRequestUrl(BattlefieldsApiTable.MATCH_KILLS, query)), BFKill[].class);
         }
         catch (Exception e)
         {
@@ -437,7 +436,7 @@ public class BattlefieldsAPIImpl implements BattlefieldsAPI
         Pair<String, Integer>[] ownedEmotes;
         try
         {
-            JsonArray jsonArray = requestDetail(getRequestUrl(BattlefieldsAPITable.OWNED_EMOTES, query));
+            JsonArray jsonArray = requestDetail(getRequestUrl(BattlefieldsApiTable.OWNED_EMOTES, query));
             ownedEmotes = new Pair[jsonArray.size()];
             for (int i = 0; i < jsonArray.size(); i++)
             {
@@ -464,7 +463,7 @@ public class BattlefieldsAPIImpl implements BattlefieldsAPI
         BFEmote[] emotes;
         try
         {
-            emotes = GSON.fromJson(requestDetail(getRequestUrl(BattlefieldsAPITable.EMOTES, query)), BFEmote[].class);
+            emotes = GSON.fromJson(requestDetail(getRequestUrl(BattlefieldsApiTable.EMOTES, query)), BFEmote[].class);
         }
         catch (Exception e)
         {
@@ -486,7 +485,7 @@ public class BattlefieldsAPIImpl implements BattlefieldsAPI
         Pair<String, Long>[] linkedDiscords;
         try
         {
-            JsonArray jsonArray = requestDetail(getRequestUrl(BattlefieldsAPITable.LINKED_DISCORD, query));
+            JsonArray jsonArray = requestDetail(getRequestUrl(BattlefieldsApiTable.LINKED_DISCORD, query));
             linkedDiscords = new Pair[jsonArray.size()];
             for (int i = 0; i < jsonArray.size(); i++)
             {
