@@ -58,7 +58,7 @@ public class BattlefieldsApiImpl implements BattlefieldsApi
             HttpGet get = new HttpGet(url);
             try (CloseableHttpResponse response = client.execute(get))
             {
-                return JsonParser.parseString(EntityUtils.toString(response.getEntity()));
+                return new JsonParser().parse(EntityUtils.toString(response.getEntity()));
             }
         }
     }
