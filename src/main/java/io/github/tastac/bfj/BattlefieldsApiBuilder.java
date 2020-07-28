@@ -18,6 +18,7 @@ public class BattlefieldsApiBuilder
     private TimeUnit shutdownTimeoutUnit;
     private long cacheTime;
     private TimeUnit cacheTimeUnit;
+    private boolean cacheErrors;
 
     public BattlefieldsApiBuilder()
     {
@@ -27,6 +28,7 @@ public class BattlefieldsApiBuilder
         this.shutdownTimeoutUnit = TimeUnit.SECONDS;
         this.cacheTime = 5;
         this.cacheTimeUnit = TimeUnit.MINUTES;
+        this.cacheErrors = true;
     }
 
     /**
@@ -82,10 +84,20 @@ public class BattlefieldsApiBuilder
     }
 
     /**
+     * Sets whether or not nothing should be cached when no info is found.
+     * @param cacheErrors Whether or not to cache errors
+     */
+    public BattlefieldsApiBuilder setCacheErrors(boolean cacheErrors)
+    {
+        this.cacheErrors = cacheErrors;
+        return this;
+    }
+
+    /**
      * @return Builds a new standard {@link BattlefieldsApi} with the provided parameters
      */
     public BattlefieldsApi create()
     {
-        return new BattlefieldsApiImpl(this.executor != null ? this.executor : Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors(), task -> new Thread(task, "Battlefields API Worker")), this.exceptionConsumer, this.shutdownTimeout, this.shutdownTimeoutUnit, this.cacheTime, this.cacheTimeUnit);
+        return new BattlefieldsApiImpl(this.executor != null ? this.executor : Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors(), task -> new Thread(task, "Battlefields API Worker")), this.exceptionConsumer, this.shutdownTimeout, this.shutdownTimeoutUnit, this.cacheTime, this.cacheTimeUnit, this.cacheErrors);
     }
 }
