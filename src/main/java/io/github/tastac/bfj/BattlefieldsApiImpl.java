@@ -14,6 +14,7 @@ import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -60,7 +61,7 @@ public class BattlefieldsApiImpl implements BattlefieldsApi
     {
         try (CloseableHttpClient client = HttpClients.custom().setUserAgent(USER_AGENT).build())
         {
-            HttpGet get = new HttpGet(url);
+            HttpGet get = new HttpGet(URLEncoder.encode(url, StandardCharsets.UTF_8.toString()));
             try (CloseableHttpResponse response = client.execute(get))
             {
                 return new JsonParser().parse(EntityUtils.toString(response.getEntity()));
