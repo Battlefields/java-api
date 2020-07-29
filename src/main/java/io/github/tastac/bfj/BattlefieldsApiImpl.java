@@ -61,7 +61,7 @@ public class BattlefieldsApiImpl implements BattlefieldsApi
     {
         try (CloseableHttpClient client = HttpClients.custom().setUserAgent(USER_AGENT).build())
         {
-            HttpGet get = new HttpGet(URLEncoder.encode(url, StandardCharsets.UTF_8.toString()));
+            HttpGet get = new HttpGet(url);
             try (CloseableHttpResponse response = client.execute(get))
             {
                 return new JsonParser().parse(EntityUtils.toString(response.getEntity()));
@@ -82,13 +82,21 @@ public class BattlefieldsApiImpl implements BattlefieldsApi
         return String.format(BFJ.BF_API_URL + "?type=%s%s", table.getTable(), query);
     }
 
-    private static String resolveQueries(String[] queries) throws UnsupportedEncodingException
+    private static String resolveQueries(String[] queries) throws IOException
     {
         if (queries.length == 0)
             return "";
         StringBuilder builder = new StringBuilder();
         for (String query : queries)
-            builder.append("&").append(URLEncoder.encode(query, "UTF-8"));
+        {
+            String[] splitQuery = query.split("=", 2);
+            if(splitQuery.length != 2)
+                throw new IOException("Invalid query: " + query);
+            builder.append("&");
+            builder.append(URLEncoder.encode(splitQuery[0], StandardCharsets.UTF_8.toString()));
+            builder.append("=");
+            builder.append(URLEncoder.encode(splitQuery[1], StandardCharsets.UTF_8.toString()));
+        }
         return builder.toString();
     }
 
