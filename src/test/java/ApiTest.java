@@ -1,43 +1,66 @@
 import io.github.tastac.bfj.BattlefieldsApi;
 import io.github.tastac.bfj.BattlefieldsApiBuilder;
+import io.github.tastac.bfj.components.*;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Arrays;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 public class ApiTest
 {
-    private static void makeRequests(BattlefieldsApi api) throws InterruptedException, ExecutionException
+    private static void makeOldRequests(BattlefieldsApi api) throws InterruptedException, ExecutionException
     {
-//        System.out.println("Weapons: " + Arrays.toString(api.requestWeapons().get()));
-//        System.out.println("Accessories: " + Arrays.toString(api.requestAccessories().get()));
-//        System.out.println("Accessory Types: " + Arrays.toString(api.requestAccessoryTypes().get()));
-//        System.out.println("Linked Discords: " + Arrays.toString(api.requestLinkedDiscord().get()));
-//        System.out.println("Owned Emotes: " + Arrays.toString(api.requestOwnedEmotes().get()));
-//        System.out.println("Emotes: " + Arrays.toString(api.requestEmotes().get()));
-//        System.out.println("Weapon Stats: " + Arrays.toString(api.requestWeaponStats("match_id=19").get()));
-//        System.out.println("Server Status: " + api.requestServerStatus().get());
-//        System.out.println("Server Info: " + api.requestServerInfo().get());
-        System.out.println("Kills: " + Arrays.toString(api.requestKills("uuid=86dc8a9f238e450280211d488095fd8a").get()));
-        System.out.println("Kills: " + Arrays.toString(api.requestKills("uuid=86dc8a9f-238e-4502-8021-1d488095fd8a").get()));
-        System.out.println("Kills: " + Arrays.toString(api.requestKills("uuid=86dc8a9f-238e-4502-8021-1d488095fd8a").get()));
-        System.out.println("Kills: " + Arrays.toString(api.requestKills("uuid=86dc8a9f-238e-4502-8021-1d488095fd8a").get()));
-        System.out.println("Kills: " + Arrays.toString(api.requestKills("uuid=86dc8a9f-238e-4502-8021-1d488095fd8a").get()));
-        System.out.println("Kills: " + Arrays.toString(api.requestKills("uuid=86dc8a9f-238e-4502-8021-1d488095fd8a").get()));
-        System.out.println("Kills: " + Arrays.toString(api.requestKills("uuid=86dc8a9f-238e-4502-8021-1d488095fd8a").get()));
-        System.out.println("Kills: " + Arrays.toString(api.requestKills("uuid=86dc8a9f-238e-4502-8021-1d488095fd8a").get()));
-        System.out.println("Kills: " + Arrays.toString(api.requestKills("uuid=86dc8a9f-238e-4502-8021-1d488095fd8a").get()));
-        System.out.println("Kills: " + Arrays.toString(api.requestKills("uuid=86dc8a9f-238e-4502-8021-1d488095fd8a").get()));
-        System.out.println("Kills: " + Arrays.toString(api.requestKills("uuid=86dc8a9f-238e-4502-8021-1d488095fd8a").get()));
+        System.out.println("Weapons: " + Arrays.toString(api.requestWeapons().get()));
+        System.out.println("Accessories: " + Arrays.toString(api.requestAccessories().get()));
+        System.out.println("Accessory Types: " + Arrays.toString(api.requestAccessoryTypes().get()));
+        System.out.println("Linked Discords: " + Arrays.toString(api.requestLinkedDiscord().get()));
+        System.out.println("Owned Emotes: " + Arrays.toString(api.requestOwnedEmotes().get()));
+        System.out.println("Emotes: " + Arrays.toString(api.requestEmotes().get()));
+        System.out.println("Weapon Stats: " + Arrays.toString(api.requestWeaponStats("match_id=19").get()));
+        System.out.println("Server Status: " + api.requestServerStatus().get());
+        System.out.println("Server Info: " + api.requestServerInfo().get());
+    }
+
+    private static void makeNewRequests(BattlefieldsApi api) throws InterruptedException, ExecutionException
+    {
+        CompletableFuture<BFWeapon[]> weaponsFuture = api.requestWeapons();
+        CompletableFuture<BFAccessory[]> accessoriesFuture = api.requestAccessories();
+        CompletableFuture<Pair<Integer, String>[]> accessoryTypesFuture = api.requestAccessoryTypes();
+        CompletableFuture<Pair<String, Long>[]> linkedDiscordFuture = api.requestLinkedDiscord();
+        CompletableFuture<Pair<String, Integer>[]> ownedEmotesFuture = api.requestOwnedEmotes();
+        CompletableFuture<BFEmote[]> emotesFuture = api.requestEmotes();
+        CompletableFuture<BFWeaponStats[]> weaponStatsFuture = api.requestWeaponStats("match_id=19");
+        CompletableFuture<String> serverStatusFuture = api.requestServerStatus();
+        CompletableFuture<BFServerInfo> serverInfoFuture = api.requestServerInfo();
+
+        CompletableFuture.allOf(weaponsFuture, accessoriesFuture, accessoryTypesFuture, linkedDiscordFuture, ownedEmotesFuture, emotesFuture, weaponStatsFuture, serverStatusFuture, serverInfoFuture).join();
+
+        System.out.println("Weapons: " + Arrays.toString(weaponsFuture.get()));
+        System.out.println("Accessories: " + Arrays.toString(accessoriesFuture.get()));
+        System.out.println("Accessory Types: " + Arrays.toString(accessoryTypesFuture.get()));
+        System.out.println("Linked Discords: " + Arrays.toString(linkedDiscordFuture.get()));
+        System.out.println("Owned Emotes: " + Arrays.toString(ownedEmotesFuture.get()));
+        System.out.println("Emotes: " + Arrays.toString(emotesFuture.get()));
+        System.out.println("Weapon Stats: " + Arrays.toString(weaponStatsFuture.get()));
+        System.out.println("Server Status: " + serverStatusFuture.get());
+        System.out.println("Server Info: " + serverInfoFuture.get());
     }
 
     public static void main(String[] args) throws Exception
     {
         BattlefieldsApi api = new BattlefieldsApiBuilder().create();
 
-        long startTime = System.currentTimeMillis();
-        makeRequests(api);
-        System.out.println("Finished requests in " + (System.currentTimeMillis() - startTime) + "ms");
+        long oldStartTime = System.currentTimeMillis();
+        makeOldRequests(api);
 
+        System.out.println("Clearing cache...");
+        api.clearCache();
+
+        long newStartTime = System.currentTimeMillis();
+        makeNewRequests(api);
+
+        System.out.println("Finished old requests in " + (System.currentTimeMillis() - oldStartTime) + "ms and new requests in " + (System.currentTimeMillis() - newStartTime) + "ms");
         System.out.println("Shutdown successfully? " + api.shutdown());
         System.out.println("Stopping!");
     }

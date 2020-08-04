@@ -5,8 +5,9 @@ import io.github.tastac.bfj.components.*;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
 import java.util.function.Consumer;
 
 /**
@@ -39,9 +40,9 @@ public interface BattlefieldsApi extends AutoCloseable
      *
      * @return The value that will exist at some point in the future
      */
-    default Future<JsonArray> request(BattlefieldsApiTable table, String... queries)
+    default CompletableFuture<JsonArray> request(BattlefieldsApiTable table, String... queries)
     {
-        return this.getExecutor().submit(() -> this.get(table, queries));
+        return CompletableFuture.supplyAsync(() -> this.get(table, queries), this.getExecutor());
     }
 
     /**
@@ -72,9 +73,9 @@ public interface BattlefieldsApi extends AutoCloseable
      *
      * @return The value that will exist at some point in the future
      */
-    default Future<String> requestServerStatus()
+    default CompletableFuture<String> requestServerStatus()
     {
-        return this.getExecutor().submit(this::getServerStatus);
+        return CompletableFuture.supplyAsync(this::getServerStatus, this.getExecutor());
     }
 
     /**
@@ -102,9 +103,9 @@ public interface BattlefieldsApi extends AutoCloseable
      *
      * @return The value that will exist at some point in the future
      */
-    default Future<BFServerInfo> requestServerInfo()
+    default CompletableFuture<BFServerInfo> requestServerInfo()
     {
-        return this.getExecutor().submit(this::getServerInfo);
+        return CompletableFuture.supplyAsync(this::getServerInfo, this.getExecutor());
     }
 
     /**
@@ -135,9 +136,9 @@ public interface BattlefieldsApi extends AutoCloseable
      * @param queries The filter to use when searching for data
      * @return The value that will exist at some point in the future
      */
-    default Future<Pair<String, Integer>[]> requestKills(String... queries)
+    default CompletableFuture<Pair<String, Integer>[]> requestKills(String... queries)
     {
-        return this.getExecutor().submit(() -> this.getKills(queries));
+        return CompletableFuture.supplyAsync(() -> this.getKills(queries), this.getExecutor());
     }
 
     /**
@@ -168,9 +169,9 @@ public interface BattlefieldsApi extends AutoCloseable
      * @param queries The filter to use when searching for data
      * @return The value that will exist at some point in the future
      */
-    default Future<Pair<String, Integer>[]> requestWins(String... queries)
+    default CompletableFuture<Pair<String, Integer>[]> requestWins(String... queries)
     {
-        return this.getExecutor().submit(() -> this.getWins(queries));
+        return CompletableFuture.supplyAsync(() -> this.getWins(queries), this.getExecutor());
     }
 
     /**
@@ -201,9 +202,9 @@ public interface BattlefieldsApi extends AutoCloseable
      * @param queries The filter to use when searching for data
      * @return The value that will exist at some point in the future
      */
-    default Future<BFPlayer[]> requestPlayers(String... queries)
+    default CompletableFuture<BFPlayer[]> requestPlayers(String... queries)
     {
-        return this.getExecutor().submit(() -> this.getPlayers(queries));
+        return CompletableFuture.supplyAsync(() -> this.getPlayers(queries), this.getExecutor());
     }
 
     /**
@@ -234,9 +235,9 @@ public interface BattlefieldsApi extends AutoCloseable
      * @param queries The filter to use when searching for data
      * @return The value that will exist at some point in the future
      */
-    default Future<BFMatch[]> requestMatches(String... queries)
+    default CompletableFuture<BFMatch[]> requestMatches(String... queries)
     {
-        return this.getExecutor().submit(() -> this.getMatches(queries));
+        return CompletableFuture.supplyAsync(() -> this.getMatches(queries), this.getExecutor());
     }
 
     /**
@@ -267,9 +268,9 @@ public interface BattlefieldsApi extends AutoCloseable
      * @param queries The filter to use when searching for data
      * @return The value that will exist at some point in the future
      */
-    default Future<Pair<String, Integer>[]> requestOwnedAccessories(String... queries)
+    default CompletableFuture<Pair<String, Integer>[]> requestOwnedAccessories(String... queries)
     {
-        return this.getExecutor().submit(() -> this.getOwnedAccessories(queries));
+        return CompletableFuture.supplyAsync(() -> this.getOwnedAccessories(queries), this.getExecutor());
     }
 
     /**
@@ -300,9 +301,9 @@ public interface BattlefieldsApi extends AutoCloseable
      * @param queries The filter to use when searching for data
      * @return The value that will exist at some point in the future
      */
-    default Future<BFAccessory[]> requestAccessories(String... queries)
+    default CompletableFuture<BFAccessory[]> requestAccessories(String... queries)
     {
-        return this.getExecutor().submit(() -> this.getAccessories(queries));
+        return CompletableFuture.supplyAsync(() -> this.getAccessories(queries), this.getExecutor());
     }
 
     /**
@@ -333,9 +334,9 @@ public interface BattlefieldsApi extends AutoCloseable
      * @param queries The filter to use when searching for data
      * @return The value that will exist at some point in the future
      */
-    default Future<Pair<Integer, String>[]> requestAccessoryTypes(String... queries)
+    default CompletableFuture<Pair<Integer, String>[]> requestAccessoryTypes(String... queries)
     {
-        return this.getExecutor().submit(() -> this.getAccessoryTypes(queries));
+        return CompletableFuture.supplyAsync(() -> this.getAccessoryTypes(queries), this.getExecutor());
     }
 
     /**
@@ -366,9 +367,9 @@ public interface BattlefieldsApi extends AutoCloseable
      * @param queries The filter to use when searching for data
      * @return The value that will exist at some point in the future
      */
-    default Future<BFWeapon[]> requestWeapons(String... queries)
+    default CompletableFuture<BFWeapon[]> requestWeapons(String... queries)
     {
-        return this.getExecutor().submit(() -> this.getWeapons(queries));
+        return CompletableFuture.supplyAsync(() -> this.getWeapons(queries), this.getExecutor());
     }
 
     /**
@@ -399,9 +400,9 @@ public interface BattlefieldsApi extends AutoCloseable
      * @param queries The filter to use when searching for data
      * @return The value that will exist at some point in the future
      */
-    default Future<BFWeaponStats[]> requestWeaponStats(String... queries)
+    default CompletableFuture<BFWeaponStats[]> requestWeaponStats(String... queries)
     {
-        return this.getExecutor().submit(() -> this.getWeaponStats(queries));
+        return CompletableFuture.supplyAsync(() -> this.getWeaponStats(queries), this.getExecutor());
     }
 
     /**
@@ -432,9 +433,9 @@ public interface BattlefieldsApi extends AutoCloseable
      * @param queries The filter to use when searching for data
      * @return The value that will exist at some point in the future
      */
-    default Future<Pair<Integer, Integer>[]> requestMatchParticipants(String... queries)
+    default CompletableFuture<Pair<Integer, Integer>[]> requestMatchParticipants(String... queries)
     {
-        return this.getExecutor().submit(() -> this.getMatchParticipants(queries));
+        return CompletableFuture.supplyAsync(() -> this.getMatchParticipants(queries), this.getExecutor());
     }
 
     /**
@@ -465,9 +466,9 @@ public interface BattlefieldsApi extends AutoCloseable
      * @param queries The filter to use when searching for data
      * @return The value that will exist at some point in the future
      */
-    default Future<BFKill[]> requestMatchKills(String... queries)
+    default CompletableFuture<BFKill[]> requestMatchKills(String... queries)
     {
-        return this.getExecutor().submit(() -> this.getMatchKills(queries));
+        return CompletableFuture.supplyAsync(() -> this.getMatchKills(queries), this.getExecutor());
     }
 
     /**
@@ -498,9 +499,9 @@ public interface BattlefieldsApi extends AutoCloseable
      * @param queries The filter to use when searching for data
      * @return The value that will exist at some point in the future
      */
-    default Future<Pair<String, Integer>[]> requestOwnedEmotes(String... queries)
+    default CompletableFuture<Pair<String, Integer>[]> requestOwnedEmotes(String... queries)
     {
-        return this.getExecutor().submit(() -> this.getOwnedEmotes(queries));
+        return CompletableFuture.supplyAsync(() -> this.getOwnedEmotes(queries), this.getExecutor());
     }
 
     /**
@@ -531,9 +532,9 @@ public interface BattlefieldsApi extends AutoCloseable
      * @param queries The filter to use when searching for data
      * @return The value that will exist at some point in the future
      */
-    default Future<BFEmote[]> requestEmotes(String... queries)
+    default CompletableFuture<BFEmote[]> requestEmotes(String... queries)
     {
-        return this.getExecutor().submit(() -> this.getEmotes(queries));
+        return CompletableFuture.supplyAsync(() -> this.getEmotes(queries), this.getExecutor());
     }
 
     /**
@@ -564,9 +565,9 @@ public interface BattlefieldsApi extends AutoCloseable
      * @param queries The filter to use when searching for data
      * @return The value that will exist at some point in the future
      */
-    default Future<Pair<String, Long>[]> requestLinkedDiscord(String... queries)
+    default CompletableFuture<Pair<String, Long>[]> requestLinkedDiscord(String... queries)
     {
-        return this.getExecutor().submit(() -> this.getLinkedDiscord(queries));
+        return CompletableFuture.supplyAsync(() -> this.getLinkedDiscord(queries), this.getExecutor());
     }
 
     /**
@@ -581,7 +582,7 @@ public interface BattlefieldsApi extends AutoCloseable
     /**
      * @return The executor used to make API requests asynchronously
      */
-    ExecutorService getExecutor();
+    Executor getExecutor();
 
     /**
      * Terminates the executor used to make API requests asynchronously.
