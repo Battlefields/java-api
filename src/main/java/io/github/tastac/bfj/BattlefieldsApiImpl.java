@@ -175,14 +175,14 @@ public class BattlefieldsApiImpl implements BattlefieldsApi
     @Override
     public String getServerStatus()
     {
-        return this.retrieve("serverStatus", () -> requestDetail(BFJ.BF_SERVER_STATUS_URL).get(0).getAsJsonObject().get(BFJ.BF_SERVER_HOSTNAME).getAsString(), () -> "red");
+        return this.retrieve("server_status", () -> requestDetail(BFJ.BF_SERVER_STATUS_URL).get(0).getAsJsonObject().get(BFJ.BF_SERVER_HOSTNAME).getAsString(), () -> "red");
     }
 
     @Nullable
     @Override
     public BFServerInfo getServerInfo()
     {
-        return this.retrieve("serverInfo", () -> GSON.fromJson(request(BFJ.BF_SERVER_INFO_URL), BFServerInfo.class), null);
+        return this.retrieve("server_info", () -> GSON.fromJson(request(BFJ.BF_SERVER_INFO_URL), BFServerInfo.class), null);
     }
 
     @SuppressWarnings("unchecked")
@@ -340,7 +340,7 @@ public class BattlefieldsApiImpl implements BattlefieldsApi
         try
         {
             String query = resolveQueries(queries);
-            return this.retrieve("accessories-" + query, () -> GSON.fromJson(requestDetail(getRequestUrl(BattlefieldsApiTable.WEAPONS, query)), BFWeapon[].class), () -> new BFWeapon[0]);
+            return this.retrieve("weapons-" + query, () -> GSON.fromJson(requestDetail(getRequestUrl(BattlefieldsApiTable.WEAPONS, query)), BFWeapon[].class), () -> new BFWeapon[0]);
         }
         catch (Exception e)
         {
@@ -371,7 +371,7 @@ public class BattlefieldsApiImpl implements BattlefieldsApi
         try
         {
             String query = resolveQueries(queries);
-            return this.retrieve("accessory_types-" + query, () ->
+            return this.retrieve("match_participants-" + query, () ->
             {
                 JsonArray jsonArray = requestDetail(getRequestUrl(BattlefieldsApiTable.MATCH_PARTICIPANTS, query));
                 Pair<Integer, Integer>[] matchParticipants = new Pair[jsonArray.size()];
