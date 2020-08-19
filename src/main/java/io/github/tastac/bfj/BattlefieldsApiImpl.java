@@ -56,21 +56,21 @@ public class BattlefieldsApiImpl implements BattlefieldsApi
         this.errorCache = new ConcurrentHashMap<>();
     }
 
-    private static JsonElement request(String url) throws IOException, JsonParseException
+    private static String request(String url) throws IOException
     {
         try (CloseableHttpClient client = HttpClients.custom().setUserAgent(USER_AGENT).build())
         {
             HttpGet get = new HttpGet(url);
             try (CloseableHttpResponse response = client.execute(get))
             {
-                return new JsonParser().parse(EntityUtils.toString(response.getEntity()));
+                return EntityUtils.toString(response.getEntity());
             }
         }
     }
 
     private static JsonArray requestDetail(String url) throws IOException, JsonParseException
     {
-        JsonObject requestObject = request(url).getAsJsonObject();
+        JsonObject requestObject = new JsonParser().parse(request(url)).getAsJsonObject();
         if (!requestObject.get("status").getAsBoolean())
             throw new IOException("Failed to connect to Battlefields API: " + requestObject.get("detail").getAsString());
         return requestObject.get("detail").getAsJsonArray();
@@ -89,7 +89,7 @@ public class BattlefieldsApiImpl implements BattlefieldsApi
         for (String query : queries)
         {
             String[] splitQuery = query.split("=", 2);
-            if(splitQuery.length != 2)
+            if (splitQuery.length != 2)
                 throw new IOException("Invalid query: " + query);
             builder.append("&");
             builder.append(URLEncoder.encode(splitQuery[0], StandardCharsets.UTF_8.toString()));
@@ -163,6 +163,34 @@ public class BattlefieldsApiImpl implements BattlefieldsApi
         {
             String query = resolveQueries(queries);
             return this.retrieve("custom-" + query, () -> requestDetail(getRequestUrl(table, query)), () -> null);
+        }
+        catch (Exception e)
+        {
+            this.exceptionConsumer.accept(e);
+            return null;
+        }
+    }
+
+    @Override
+    public JsonObject getCosmeticModel(String modelName)
+    {
+        try
+        {
+            return this.retrieve("cosmetic_model", () -> new JsonParser().parse(request(BFJ.BF_COSMETIC_MODEL_URL + modelName + ".json")).getAsJsonObject(), () -> null);
+        }
+        catch (Exception e)
+        {
+            this.exceptionConsumer.accept(e);
+            return null;
+        }
+    }
+
+    @Override
+    public String getCosmeticModelHash(String modelName)
+    {
+        try
+        {
+            return this.retrieve("cosmetic_model_hash", () -> request(BFJ.BF_COSMETIC_MODEL_URL + modelName + ".md5"), () -> null);
         }
         catch (Exception e)
         {

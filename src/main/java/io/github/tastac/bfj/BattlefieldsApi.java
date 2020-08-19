@@ -1,6 +1,7 @@
 package io.github.tastac.bfj;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import io.github.tastac.bfj.components.*;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -53,6 +54,68 @@ public interface BattlefieldsApi extends AutoCloseable
      */
     @Nullable
     JsonArray get(BattlefieldsApiTable table, String... queries);
+
+    /**
+     * <p>Fetches the specified cosmetic model from the API.</p>
+     * <p>This method is asynchronous and will call the provided handler when the value is received.</p>
+     *
+     * @param handler The handler that will receive the result
+     */
+    default void requestCosmeticModel(Consumer<JsonObject> handler, String modelName)
+    {
+        this.getExecutor().execute(() -> handler.accept(this.getCosmeticModel(modelName)));
+    }
+
+    /**
+     * <p>Fetches the specified cosmetic model from the API.</p>
+     * <p>This method is asynchronous and the received value is indicated to exist at some point in the future.</p>
+     *
+     * @return The value that will exist at some point in the future
+     */
+    default CompletableFuture<JsonObject> requestCosmeticModel(String modelName)
+    {
+        return CompletableFuture.supplyAsync(() -> this.getCosmeticModel(modelName), this.getExecutor());
+    }
+
+    /**
+     * <p>Fetches the specified cosmetic model from the API.</p>
+     * <p>This method is not asynchronous and will block code execution until the value has been received.</p>
+     *
+     * @param modelName The name of the model to get
+     * @return The cosmetic model data read from online
+     */
+    JsonObject getCosmeticModel(String modelName);
+
+    /**
+     * <p>Fetches the specified cosmetic model md5 hash from the API.</p>
+     * <p>This method is asynchronous and will call the provided handler when the value is received.</p>
+     *
+     * @param handler The handler that will receive the result
+     */
+    default void requestCosmeticModelHash(Consumer<String> handler, String modelName)
+    {
+        this.getExecutor().execute(() -> handler.accept(this.getCosmeticModelHash(modelName)));
+    }
+
+    /**
+     * <p>Fetches the specified cosmetic model md5 hash from the API.</p>
+     * <p>This method is asynchronous and the received value is indicated to exist at some point in the future.</p>
+     *
+     * @return The value that will exist at some point in the future
+     */
+    default CompletableFuture<String> requestCosmeticModelHash(String modelName)
+    {
+        return CompletableFuture.supplyAsync(() -> this.getCosmeticModelHash(modelName), this.getExecutor());
+    }
+
+    /**
+     * <p>Fetches the specified cosmetic model md5 hash from the API.</p>
+     * <p>This method is not asynchronous and will block code execution until the value has been received.</p>
+     *
+     * @param modelName The name of the model to get the hash for
+     * @return The cosmetic model hash read from online
+     */
+    String getCosmeticModelHash(String modelName);
 
     /**
      * <p>Fetches the server status from the API.</p>
