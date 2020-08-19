@@ -14,7 +14,6 @@ import java.util.function.Consumer;
  *
  * @author Ocelot
  */
-@SuppressWarnings("unused")
 public interface BattlefieldsApi extends AutoCloseable
 {
     /**
