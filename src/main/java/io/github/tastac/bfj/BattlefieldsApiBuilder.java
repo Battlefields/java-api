@@ -69,7 +69,7 @@ public class BattlefieldsApiBuilder
     }
 
     /**
-     * Sets the amount of time data is cached for.
+     * Sets the amount of time data is cached for. <code>0</code> will disable caching.
      *
      * @param cacheTime The time to cache data
      * @param timeUnit  The unit cacheTime is provided in
@@ -85,6 +85,7 @@ public class BattlefieldsApiBuilder
 
     /**
      * Sets whether or not nothing should be cached when no info is found.
+     *
      * @param cacheErrors Whether or not to cache errors
      */
     public BattlefieldsApiBuilder setCacheErrors(boolean cacheErrors)

@@ -1,8 +1,6 @@
 import com.google.gson.JsonObject;
 import io.github.tastac.bfj.BattlefieldsApi;
 import io.github.tastac.bfj.BattlefieldsApiBuilder;
-import io.github.tastac.bfj.components.*;
-import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
@@ -14,11 +12,15 @@ public class ModelTest
     {
         CompletableFuture<String> modelHashFuture = api.requestCosmeticModelHash("cat_ears");
         CompletableFuture<JsonObject> modelFuture = api.requestCosmeticModel("cat_ears");
+        CompletableFuture<String> textureHashFuture = api.requestCosmeticTextureHash("cat_ears");
+        CompletableFuture<byte[]> textureFuture = api.requestCosmeticTexture("cat_ears");
 
-        CompletableFuture.allOf(modelHashFuture, modelFuture).join();
+        CompletableFuture.allOf(modelHashFuture, modelFuture, textureHashFuture, textureFuture).join();
 
         System.out.println("Model Hash: " + modelHashFuture.get());
         System.out.println("Model: " + modelFuture.get());
+        System.out.println("Texture Hash: " + textureHashFuture.get());
+        System.out.println("Texture: " + Arrays.toString(textureFuture.get()));
     }
 
     public static void main(String[] args) throws Exception

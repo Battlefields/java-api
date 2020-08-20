@@ -59,7 +59,8 @@ public interface BattlefieldsApi extends AutoCloseable
      * <p>Fetches the specified cosmetic model from the API.</p>
      * <p>This method is asynchronous and will call the provided handler when the value is received.</p>
      *
-     * @param handler The handler that will receive the result
+     * @param handler   The handler that will receive the result
+     * @param modelName The name of the model to get the hash for
      */
     default void requestCosmeticModel(Consumer<JsonObject> handler, String modelName)
     {
@@ -70,6 +71,7 @@ public interface BattlefieldsApi extends AutoCloseable
      * <p>Fetches the specified cosmetic model from the API.</p>
      * <p>This method is asynchronous and the received value is indicated to exist at some point in the future.</p>
      *
+     * @param modelName The name of the model to get the hash for
      * @return The value that will exist at some point in the future
      */
     default CompletableFuture<JsonObject> requestCosmeticModel(String modelName)
@@ -90,7 +92,8 @@ public interface BattlefieldsApi extends AutoCloseable
      * <p>Fetches the specified cosmetic model md5 hash from the API.</p>
      * <p>This method is asynchronous and will call the provided handler when the value is received.</p>
      *
-     * @param handler The handler that will receive the result
+     * @param handler   The handler that will receive the result
+     * @param modelName The name of the model to get the hash for
      */
     default void requestCosmeticModelHash(Consumer<String> handler, String modelName)
     {
@@ -101,6 +104,7 @@ public interface BattlefieldsApi extends AutoCloseable
      * <p>Fetches the specified cosmetic model md5 hash from the API.</p>
      * <p>This method is asynchronous and the received value is indicated to exist at some point in the future.</p>
      *
+     * @param modelName The name of the model to get the hash for
      * @return The value that will exist at some point in the future
      */
     default CompletableFuture<String> requestCosmeticModelHash(String modelName)
@@ -116,6 +120,72 @@ public interface BattlefieldsApi extends AutoCloseable
      * @return The cosmetic model hash read from online
      */
     String getCosmeticModelHash(String modelName);
+
+    /**
+     * <p>Fetches the specified cosmetic model from the API.</p>
+     * <p>This method is asynchronous and will call the provided handler when the value is received.</p>
+     *
+     * @param handler     The handler that will receive the result
+     * @param textureName The name of the texture to get the hash for
+     */
+    default void requestCosmeticTexture(Consumer<byte[]> handler, String textureName)
+    {
+        this.getExecutor().execute(() -> handler.accept(this.getCosmeticTexture(textureName)));
+    }
+
+    /**
+     * <p>Fetches the specified cosmetic model from the API.</p>
+     * <p>This method is asynchronous and the received value is indicated to exist at some point in the future.</p>
+     *
+     * @param textureName The name of the texture to get the hash for
+     * @return The value that will exist at some point in the future
+     */
+    default CompletableFuture<byte[]> requestCosmeticTexture(String textureName)
+    {
+        return CompletableFuture.supplyAsync(() -> this.getCosmeticTexture(textureName), this.getExecutor());
+    }
+
+    /**
+     * <p>Fetches the specified cosmetic model from the API.</p>
+     * <p>This method is not asynchronous and will block code execution until the value has been received.</p>
+     *
+     * @param textureName The name of the texture to get the hash for
+     * @return The cosmetic model data read from online
+     */
+    byte[] getCosmeticTexture(String textureName);
+
+    /**
+     * <p>Fetches the specified cosmetic texture md5 hash from the API.</p>
+     * <p>This method is asynchronous and will call the provided handler when the value is received.</p>
+     *
+     * @param handler     The handler that will receive the result
+     * @param textureName The name of the texture to get the hash for
+     */
+    default void requestCosmeticTextureHash(Consumer<String> handler, String textureName)
+    {
+        this.getExecutor().execute(() -> handler.accept(this.getCosmeticTextureHash(textureName)));
+    }
+
+    /**
+     * <p>Fetches the specified cosmetic texture md5 hash from the API.</p>
+     * <p>This method is asynchronous and the received value is indicated to exist at some point in the future.</p>
+     *
+     * @param textureName The name of the texture to get the hash for
+     * @return The value that will exist at some point in the future
+     */
+    default CompletableFuture<String> requestCosmeticTextureHash(String textureName)
+    {
+        return CompletableFuture.supplyAsync(() -> this.getCosmeticTextureHash(textureName), this.getExecutor());
+    }
+
+    /**
+     * <p>Fetches the specified cosmetic texture md5 hash from the API.</p>
+     * <p>This method is not asynchronous and will block code execution until the value has been received.</p>
+     *
+     * @param textureName The name of the texture to get the hash for
+     * @return The cosmetic texture hash read from online
+     */
+    String getCosmeticTextureHash(String textureName);
 
     /**
      * <p>Fetches the server status from the API.</p>

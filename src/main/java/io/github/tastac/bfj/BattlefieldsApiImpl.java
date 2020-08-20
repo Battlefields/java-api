@@ -56,6 +56,18 @@ public class BattlefieldsApiImpl implements BattlefieldsApi
         this.errorCache = new ConcurrentHashMap<>();
     }
 
+    private static byte[] requestBytes(String url) throws IOException
+    {
+        try (CloseableHttpClient client = HttpClients.custom().setUserAgent(USER_AGENT).build())
+        {
+            HttpGet get = new HttpGet(url);
+            try (CloseableHttpResponse response = client.execute(get))
+            {
+                return EntityUtils.toByteArray(response.getEntity());
+            }
+        }
+    }
+
     private static String request(String url) throws IOException
     {
         try (CloseableHttpClient client = HttpClients.custom().setUserAgent(USER_AGENT).build())
@@ -101,6 +113,8 @@ public class BattlefieldsApiImpl implements BattlefieldsApi
 
     private boolean isCacheValid(String field)
     {
+        if (this.cacheTime <= 0)
+            return false;
         if (!this.timeStamps.containsKey(field) && (!this.cacheErrors || !this.errorCache.containsKey(field)))
             return false;
         long timeStamp = this.timeStamps.containsKey(field) ? this.timeStamps.get(field) : this.errorCache.get(field);
@@ -134,14 +148,17 @@ public class BattlefieldsApiImpl implements BattlefieldsApi
         try
         {
             T value = fetcher.fetch();
-            this.timeStamps.put(field, System.currentTimeMillis());
-            this.cache.put(field, value);
+            if (this.cacheTime > 0)
+            {
+                this.timeStamps.put(field, System.currentTimeMillis());
+                this.cache.put(field, value);
+            }
             return value;
         }
         catch (Exception e)
         {
             this.exceptionConsumer.accept(e);
-            if (this.cacheErrors)
+            if (this.cacheTime > 0 && this.cacheErrors)
                 this.errorCache.put(field, System.currentTimeMillis());
             return defaultValue.get();
         }
@@ -191,6 +208,34 @@ public class BattlefieldsApiImpl implements BattlefieldsApi
         try
         {
             return this.retrieve("cosmetic_model_hash", () -> request(BFJ.BF_COSMETIC_MODEL_URL + modelName + ".md5"), () -> null);
+        }
+        catch (Exception e)
+        {
+            this.exceptionConsumer.accept(e);
+            return null;
+        }
+    }
+
+    @Override
+    public byte[] getCosmeticTexture(String textureName)
+    {
+        try
+        {
+            return this.retrieve("cosmetic_texture", () -> requestBytes(BFJ.BF_COSMETIC_TEXTURE_URL + textureName + ".png"), () -> null);
+        }
+        catch (Exception e)
+        {
+            this.exceptionConsumer.accept(e);
+            return null;
+        }
+    }
+
+    @Override
+    public String getCosmeticTextureHash(String textureName)
+    {
+        try
+        {
+            return this.retrieve("cosmetic_texture_hash", () -> request(BFJ.BF_COSMETIC_TEXTURE_URL + textureName + ".md5"), () -> null);
         }
         catch (Exception e)
         {
