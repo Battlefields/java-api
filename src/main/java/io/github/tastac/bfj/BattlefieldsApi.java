@@ -86,6 +86,7 @@ public interface BattlefieldsApi extends AutoCloseable
      * @param modelName The name of the model to get
      * @return The cosmetic model data read from online
      */
+    @Nullable
     JsonObject getCosmeticModel(String modelName);
 
     /**
@@ -119,6 +120,7 @@ public interface BattlefieldsApi extends AutoCloseable
      * @param modelName The name of the model to get the hash for
      * @return The cosmetic model hash read from online
      */
+    @Nullable
     String getCosmeticModelHash(String modelName);
 
     /**
@@ -152,6 +154,7 @@ public interface BattlefieldsApi extends AutoCloseable
      * @param textureName The name of the texture to get the hash for
      * @return The cosmetic model data read from online
      */
+    @Nullable
     byte[] getCosmeticTexture(String textureName);
 
     /**
@@ -185,6 +188,7 @@ public interface BattlefieldsApi extends AutoCloseable
      * @param textureName The name of the texture to get the hash for
      * @return The cosmetic texture hash read from online
      */
+    @Nullable
     String getCosmeticTextureHash(String textureName);
 
     /**
