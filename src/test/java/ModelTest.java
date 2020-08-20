@@ -10,10 +10,10 @@ public class ModelTest
 {
     private static void makeRequests(BattlefieldsApi api) throws InterruptedException, ExecutionException
     {
-        CompletableFuture<String> modelHashFuture = api.requestCosmeticModelHash("cat_ears2");
-        CompletableFuture<JsonObject> modelFuture = api.requestCosmeticModel("cat_ears2");
-        CompletableFuture<String> textureHashFuture = api.requestCosmeticTextureHash("cat_ears/white1");
-        CompletableFuture<byte[]> textureFuture = api.requestCosmeticTexture("cat_ears/white1");
+        CompletableFuture<String> modelHashFuture = api.requestCosmeticModelHash("cat_ears");
+        CompletableFuture<JsonObject> modelFuture = api.requestCosmeticModel("cat_ears");
+        CompletableFuture<String> textureHashFuture = api.requestCosmeticTextureHash("plunger_knees/plunger_knees");
+        CompletableFuture<byte[]> textureFuture = api.requestCosmeticTexture("plunger_knees/plunger_knees");
 
         CompletableFuture.allOf(modelHashFuture, modelFuture, textureHashFuture, textureFuture).join();
 
