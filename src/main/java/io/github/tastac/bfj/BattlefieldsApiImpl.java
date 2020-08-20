@@ -4,6 +4,7 @@ import com.google.gson.*;
 import io.github.tastac.bfj.components.*;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -56,33 +57,39 @@ public class BattlefieldsApiImpl implements BattlefieldsApi
         this.errorCache = new ConcurrentHashMap<>();
     }
 
-    private static byte[] requestBytes(String url) throws IOException
+    private static byte[] requestRaw(String url) throws IOException
     {
         try (CloseableHttpClient client = HttpClients.custom().setUserAgent(USER_AGENT).build())
         {
             HttpGet get = new HttpGet(url);
             try (CloseableHttpResponse response = client.execute(get))
             {
+                StatusLine statusLine = response.getStatusLine();
+                if(statusLine.getStatusCode() != 200)
+                    throw new IOException(statusLine.getStatusCode() + " " + statusLine.getReasonPhrase());
                 return EntityUtils.toByteArray(response.getEntity());
             }
         }
     }
 
-    private static String request(String url) throws IOException
+    private static JsonElement request(String url) throws IOException
     {
         try (CloseableHttpClient client = HttpClients.custom().setUserAgent(USER_AGENT).build())
         {
             HttpGet get = new HttpGet(url);
             try (CloseableHttpResponse response = client.execute(get))
             {
-                return EntityUtils.toString(response.getEntity());
+                StatusLine statusLine = response.getStatusLine();
+                if(statusLine.getStatusCode() != 200)
+                    throw new IOException(statusLine.getStatusCode() + " " + statusLine.getReasonPhrase());
+                return new JsonParser().parse(EntityUtils.toString(response.getEntity()));
             }
         }
     }
 
     private static JsonArray requestDetail(String url) throws IOException, JsonParseException
     {
-        JsonObject requestObject = new JsonParser().parse(request(url)).getAsJsonObject();
+        JsonObject requestObject = request(url).getAsJsonObject();
         if (!requestObject.get("status").getAsBoolean())
             throw new IOException("Failed to connect to Battlefields API: " + requestObject.get("detail").getAsString());
         return requestObject.get("detail").getAsJsonArray();
@@ -188,12 +195,13 @@ public class BattlefieldsApiImpl implements BattlefieldsApi
         }
     }
 
+    @Nullable
     @Override
     public JsonObject getCosmeticModel(String modelName)
     {
         try
         {
-            return this.retrieve("cosmetic_model", () -> new JsonParser().parse(request(BFJ.BF_COSMETIC_MODEL_URL + modelName + ".json")).getAsJsonObject(), () -> null);
+            return this.retrieve("cosmetic_model", () -> new JsonParser().parse(new String(requestRaw(BFJ.BF_COSMETIC_MODEL_URL + modelName + ".json"))).getAsJsonObject(), () -> null);
         }
         catch (Exception e)
         {
@@ -202,12 +210,13 @@ public class BattlefieldsApiImpl implements BattlefieldsApi
         }
     }
 
+    @Nullable
     @Override
     public String getCosmeticModelHash(String modelName)
     {
         try
         {
-            return this.retrieve("cosmetic_model_hash", () -> request(BFJ.BF_COSMETIC_MODEL_URL + modelName + ".json.md5"), () -> null);
+            return this.retrieve("cosmetic_model_hash", () -> new String(requestRaw(BFJ.BF_COSMETIC_MODEL_URL + modelName + ".json.md5")), () -> null);
         }
         catch (Exception e)
         {
@@ -216,12 +225,13 @@ public class BattlefieldsApiImpl implements BattlefieldsApi
         }
     }
 
+    @Nullable
     @Override
     public byte[] getCosmeticTexture(String textureName)
     {
         try
         {
-            return this.retrieve("cosmetic_texture", () -> requestBytes(BFJ.BF_COSMETIC_TEXTURE_URL + textureName + ".png"), () -> null);
+            return this.retrieve("cosmetic_texture", () -> requestRaw(BFJ.BF_COSMETIC_TEXTURE_URL + textureName + ".png"), () -> null);
         }
         catch (Exception e)
         {
@@ -230,12 +240,13 @@ public class BattlefieldsApiImpl implements BattlefieldsApi
         }
     }
 
+    @Nullable
     @Override
     public String getCosmeticTextureHash(String textureName)
     {
         try
         {
-            return this.retrieve("cosmetic_texture_hash", () -> request(BFJ.BF_COSMETIC_TEXTURE_URL + textureName + ".png.md5"), () -> null);
+            return this.retrieve("cosmetic_texture_hash", () -> new String(requestRaw(BFJ.BF_COSMETIC_TEXTURE_URL + textureName + ".png.md5")), () -> null);
         }
         catch (Exception e)
         {
