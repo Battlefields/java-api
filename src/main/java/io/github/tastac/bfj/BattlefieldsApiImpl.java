@@ -207,7 +207,7 @@ public class BattlefieldsApiImpl implements BattlefieldsApi
     {
         try
         {
-            return this.retrieve("cosmetic_model_hash", () -> request(BFJ.BF_COSMETIC_MODEL_URL + modelName + ".md5"), () -> null);
+            return this.retrieve("cosmetic_model_hash", () -> request(BFJ.BF_COSMETIC_MODEL_URL + modelName + ".json.md5"), () -> null);
         }
         catch (Exception e)
         {
@@ -235,7 +235,7 @@ public class BattlefieldsApiImpl implements BattlefieldsApi
     {
         try
         {
-            return this.retrieve("cosmetic_texture_hash", () -> request(BFJ.BF_COSMETIC_TEXTURE_URL + textureName + ".md5"), () -> null);
+            return this.retrieve("cosmetic_texture_hash", () -> request(BFJ.BF_COSMETIC_TEXTURE_URL + textureName + ".png.md5"), () -> null);
         }
         catch (Exception e)
         {

@@ -12,8 +12,8 @@ public class ModelTest
     {
         CompletableFuture<String> modelHashFuture = api.requestCosmeticModelHash("cat_ears");
         CompletableFuture<JsonObject> modelFuture = api.requestCosmeticModel("cat_ears");
-        CompletableFuture<String> textureHashFuture = api.requestCosmeticTextureHash("cat_ears");
-        CompletableFuture<byte[]> textureFuture = api.requestCosmeticTexture("cat_ears");
+        CompletableFuture<String> textureHashFuture = api.requestCosmeticTextureHash("cat_ears/white");
+        CompletableFuture<byte[]> textureFuture = api.requestCosmeticTexture("cat_ears/white");
 
         CompletableFuture.allOf(modelHashFuture, modelFuture, textureHashFuture, textureFuture).join();
 
