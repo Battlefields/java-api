@@ -65,8 +65,8 @@ public class BattlefieldsApiImpl implements BattlefieldsApi
             try (CloseableHttpResponse response = client.execute(get))
             {
                 StatusLine statusLine = response.getStatusLine();
-                if(statusLine.getStatusCode() != 200)
-                    throw new IOException(statusLine.getStatusCode() + " " + statusLine.getReasonPhrase());
+                if (statusLine.getStatusCode() != 200)
+                    throw new IOException("Failed to connect to '" + url + "'. " + statusLine.getStatusCode() + " " + statusLine.getReasonPhrase());
                 return EntityUtils.toByteArray(response.getEntity());
             }
         }
@@ -80,8 +80,8 @@ public class BattlefieldsApiImpl implements BattlefieldsApi
             try (CloseableHttpResponse response = client.execute(get))
             {
                 StatusLine statusLine = response.getStatusLine();
-                if(statusLine.getStatusCode() != 200)
-                    throw new IOException(statusLine.getStatusCode() + " " + statusLine.getReasonPhrase());
+                if (statusLine.getStatusCode() != 200)
+                    throw new IOException("Failed to connect to '" + url + "'. " + statusLine.getStatusCode() + " " + statusLine.getReasonPhrase());
                 return new JsonParser().parse(EntityUtils.toString(response.getEntity()));
             }
         }
