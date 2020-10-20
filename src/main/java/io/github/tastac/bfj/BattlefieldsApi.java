@@ -3,9 +3,7 @@ package io.github.tastac.bfj;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import io.github.tastac.bfj.components.*;
-import org.apache.commons.lang3.tuple.Pair;
 
-import javax.annotation.Nullable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Consumer;
@@ -50,9 +48,8 @@ public interface BattlefieldsApi extends AutoCloseable
      *
      * @param table   The table to query
      * @param queries The filter to use when searching for data
-     * @return The requested information or null if the API request failed
+     * @return The requested information or <code>null</code> if the API request failed
      */
-    @Nullable
     JsonArray get(BattlefieldsApiTable table, String... queries);
 
     /**
@@ -84,9 +81,8 @@ public interface BattlefieldsApi extends AutoCloseable
      * <p>This method is not asynchronous and will block code execution until the value has been received.</p>
      *
      * @param modelName The name of the model to get
-     * @return The cosmetic model data read from online
+     * @return The cosmetic model data read from online or <code>null</code> if there is no model found
      */
-    @Nullable
     JsonObject getCosmeticModel(String modelName);
 
     /**
@@ -118,9 +114,8 @@ public interface BattlefieldsApi extends AutoCloseable
      * <p>This method is not asynchronous and will block code execution until the value has been received.</p>
      *
      * @param modelName The name of the model to get the hash for
-     * @return The cosmetic model hash read from online
+     * @return The cosmetic model hash read from online or <code>null</code> if there is no model hash found
      */
-    @Nullable
     String getCosmeticModelHash(String modelName);
 
     /**
@@ -152,9 +147,8 @@ public interface BattlefieldsApi extends AutoCloseable
      * <p>This method is not asynchronous and will block code execution until the value has been received.</p>
      *
      * @param textureName The name of the texture to get the hash for
-     * @return The cosmetic model data read from online
+     * @return The cosmetic model data read from online or <code>null</code> if there is no texture found
      */
-    @Nullable
     byte[] getCosmeticTexture(String textureName);
 
     /**
@@ -186,9 +180,8 @@ public interface BattlefieldsApi extends AutoCloseable
      * <p>This method is not asynchronous and will block code execution until the value has been received.</p>
      *
      * @param textureName The name of the texture to get the hash for
-     * @return The cosmetic texture hash read from online
+     * @return The cosmetic texture hash read from online or <code>null</code> if there is no texture hash found
      */
-    @Nullable
     String getCosmeticTextureHash(String textureName);
 
     /**
@@ -247,9 +240,8 @@ public interface BattlefieldsApi extends AutoCloseable
      * <p>Fetches the server information from the API.</p>
      * <p>This method is not asynchronous and will block code execution until the value has been received.</p>
      *
-     * @return The information about the server or null if the server did not respond. Use {@link #getServerStatus()} to determine if the server should be able to send data
+     * @return The information about the server or <code>null</code> if the server did not respond. Use {@link #getServerStatus()} to determine if the server should be able to send data
      */
-    @Nullable
     BFServerInfo getServerInfo();
 
     /**
@@ -259,7 +251,7 @@ public interface BattlefieldsApi extends AutoCloseable
      * @param queries The filter to use when searching for data
      * @param handler The handler that will receive the result
      */
-    default void requestKills(Consumer<Pair<String, Integer>[]> handler, String... queries)
+    default void requestKills(Consumer<BFKill[]> handler, String... queries)
     {
         this.getExecutor().execute(() -> handler.accept(this.getKills(queries)));
     }
@@ -271,7 +263,7 @@ public interface BattlefieldsApi extends AutoCloseable
      * @param queries The filter to use when searching for data
      * @return The value that will exist at some point in the future
      */
-    default CompletableFuture<Pair<String, Integer>[]> requestKills(String... queries)
+    default CompletableFuture<BFKill[]> requestKills(String... queries)
     {
         return CompletableFuture.supplyAsync(() -> this.getKills(queries), this.getExecutor());
     }
@@ -283,7 +275,7 @@ public interface BattlefieldsApi extends AutoCloseable
      * @param queries The filter to use when searching for data
      * @return The weapon information or an empty array if the API request failed
      */
-    Pair<String, Integer>[] getKills(String... queries);
+    BFKill[] getKills(String... queries);
 
     /**
      * <p>Fetches information about wins with the specified queries.</p>
@@ -292,7 +284,7 @@ public interface BattlefieldsApi extends AutoCloseable
      * @param queries The filter to use when searching for data
      * @param handler The handler that will receive the result
      */
-    default void requestWins(Consumer<Pair<String, Integer>[]> handler, String... queries)
+    default void requestWins(Consumer<BFWin[]> handler, String... queries)
     {
         this.getExecutor().execute(() -> handler.accept(this.getWins(queries)));
     }
@@ -304,7 +296,7 @@ public interface BattlefieldsApi extends AutoCloseable
      * @param queries The filter to use when searching for data
      * @return The value that will exist at some point in the future
      */
-    default CompletableFuture<Pair<String, Integer>[]> requestWins(String... queries)
+    default CompletableFuture<BFWin[]> requestWins(String... queries)
     {
         return CompletableFuture.supplyAsync(() -> this.getWins(queries), this.getExecutor());
     }
@@ -316,7 +308,7 @@ public interface BattlefieldsApi extends AutoCloseable
      * @param queries The filter to use when searching for data
      * @return The win information or an empty array  if the API request failed
      */
-    Pair<String, Integer>[] getWins(String... queries);
+    BFWin[] getWins(String... queries);
 
     /**
      * <p>Fetches information about players with the specified queries.</p>
@@ -391,7 +383,7 @@ public interface BattlefieldsApi extends AutoCloseable
      * @param queries The filter to use when searching for data
      * @param handler The handler that will receive the result
      */
-    default void requestOwnedAccessories(Consumer<Pair<String, Integer>[]> handler, String... queries)
+    default void requestOwnedAccessories(Consumer<BFOwnedAccessory[]> handler, String... queries)
     {
         this.getExecutor().execute(() -> handler.accept(this.getOwnedAccessories(queries)));
     }
@@ -403,7 +395,7 @@ public interface BattlefieldsApi extends AutoCloseable
      * @param queries The filter to use when searching for data
      * @return The value that will exist at some point in the future
      */
-    default CompletableFuture<Pair<String, Integer>[]> requestOwnedAccessories(String... queries)
+    default CompletableFuture<BFOwnedAccessory[]> requestOwnedAccessories(String... queries)
     {
         return CompletableFuture.supplyAsync(() -> this.getOwnedAccessories(queries), this.getExecutor());
     }
@@ -415,7 +407,7 @@ public interface BattlefieldsApi extends AutoCloseable
      * @param queries The filter to use when searching for data
      * @return The accessory information or an empty array if the API request failed
      */
-    Pair<String, Integer>[] getOwnedAccessories(String... queries);
+    BFOwnedAccessory[] getOwnedAccessories(String... queries);
 
     /**
      * <p>Fetches information all accessories that exist with the specified queries.</p>
@@ -457,7 +449,7 @@ public interface BattlefieldsApi extends AutoCloseable
      * @param queries The filter to use when searching for data
      * @param handler The handler that will receive the result
      */
-    default void requestAccessoryTypes(Consumer<Pair<Integer, String>[]> handler, String... queries)
+    default void requestAccessoryTypes(Consumer<BFAccessoryType[]> handler, String... queries)
     {
         this.getExecutor().execute(() -> handler.accept(this.getAccessoryTypes(queries)));
     }
@@ -469,7 +461,7 @@ public interface BattlefieldsApi extends AutoCloseable
      * @param queries The filter to use when searching for data
      * @return The value that will exist at some point in the future
      */
-    default CompletableFuture<Pair<Integer, String>[]> requestAccessoryTypes(String... queries)
+    default CompletableFuture<BFAccessoryType[]> requestAccessoryTypes(String... queries)
     {
         return CompletableFuture.supplyAsync(() -> this.getAccessoryTypes(queries), this.getExecutor());
     }
@@ -481,7 +473,7 @@ public interface BattlefieldsApi extends AutoCloseable
      * @param queries The filter to use when searching for data
      * @return The accessory type information or an empty array if the API request failed
      */
-    Pair<Integer, String>[] getAccessoryTypes(String... queries);
+    BFAccessoryType[] getAccessoryTypes(String... queries);
 
     /**
      * <p>Fetches information about weapons with the specified queries.</p>
@@ -556,7 +548,7 @@ public interface BattlefieldsApi extends AutoCloseable
      * @param queries The filter to use when searching for data
      * @param handler The handler that will receive the result
      */
-    default void requestMatchParticipants(Consumer<Pair<Integer, Integer>[]> handler, String... queries)
+    default void requestMatchParticipants(Consumer<BFMatchParticipant[]> handler, String... queries)
     {
         this.getExecutor().execute(() -> handler.accept(this.getMatchParticipants(queries)));
     }
@@ -568,7 +560,7 @@ public interface BattlefieldsApi extends AutoCloseable
      * @param queries The filter to use when searching for data
      * @return The value that will exist at some point in the future
      */
-    default CompletableFuture<Pair<Integer, Integer>[]> requestMatchParticipants(String... queries)
+    default CompletableFuture<BFMatchParticipant[]> requestMatchParticipants(String... queries)
     {
         return CompletableFuture.supplyAsync(() -> this.getMatchParticipants(queries), this.getExecutor());
     }
@@ -580,7 +572,7 @@ public interface BattlefieldsApi extends AutoCloseable
      * @param queries The filter to use when searching for data
      * @return The weapon information or an empty array if the API request failed
      */
-    Pair<Integer, Integer>[] getMatchParticipants(String... queries);
+    BFMatchParticipant[] getMatchParticipants(String... queries);
 
     /**
      * <p>Fetches information about each kill in each match with the specified queries.</p>
@@ -589,7 +581,7 @@ public interface BattlefieldsApi extends AutoCloseable
      * @param queries The filter to use when searching for data
      * @param handler The handler that will receive the result
      */
-    default void requestMatchKills(Consumer<BFKill[]> handler, String... queries)
+    default void requestMatchKills(Consumer<BFKillInfo[]> handler, String... queries)
     {
         this.getExecutor().execute(() -> handler.accept(this.getMatchKills(queries)));
     }
@@ -601,7 +593,7 @@ public interface BattlefieldsApi extends AutoCloseable
      * @param queries The filter to use when searching for data
      * @return The value that will exist at some point in the future
      */
-    default CompletableFuture<BFKill[]> requestMatchKills(String... queries)
+    default CompletableFuture<BFKillInfo[]> requestMatchKills(String... queries)
     {
         return CompletableFuture.supplyAsync(() -> this.getMatchKills(queries), this.getExecutor());
     }
@@ -613,7 +605,7 @@ public interface BattlefieldsApi extends AutoCloseable
      * @param queries The filter to use when searching for data
      * @return The weapon information or an empty array if the API request failed
      */
-    BFKill[] getMatchKills(String... queries);
+    BFKillInfo[] getMatchKills(String... queries);
 
     /**
      * <p>Fetches information about emotes players own with the specified queries.</p>
@@ -622,7 +614,7 @@ public interface BattlefieldsApi extends AutoCloseable
      * @param queries The filter to use when searching for data
      * @param handler The handler that will receive the result
      */
-    default void requestOwnedEmotes(Consumer<Pair<String, Integer>[]> handler, String... queries)
+    default void requestOwnedEmotes(Consumer<BFOwnedEmote[]> handler, String... queries)
     {
         this.getExecutor().execute(() -> handler.accept(this.getOwnedEmotes(queries)));
     }
@@ -634,7 +626,7 @@ public interface BattlefieldsApi extends AutoCloseable
      * @param queries The filter to use when searching for data
      * @return The value that will exist at some point in the future
      */
-    default CompletableFuture<Pair<String, Integer>[]> requestOwnedEmotes(String... queries)
+    default CompletableFuture<BFOwnedEmote[]> requestOwnedEmotes(String... queries)
     {
         return CompletableFuture.supplyAsync(() -> this.getOwnedEmotes(queries), this.getExecutor());
     }
@@ -646,7 +638,7 @@ public interface BattlefieldsApi extends AutoCloseable
      * @param queries The filter to use when searching for data
      * @return The accessory information or an empty array if the API request failed
      */
-    Pair<String, Integer>[] getOwnedEmotes(String... queries);
+    BFOwnedEmote[] getOwnedEmotes(String... queries);
 
     /**
      * <p>Fetches information all emotes that exist with the specified queries.</p>
@@ -688,7 +680,7 @@ public interface BattlefieldsApi extends AutoCloseable
      * @param queries The filter to use when searching for data
      * @param handler The handler that will receive the result
      */
-    default void requestLinkedDiscord(Consumer<Pair<String, Long>[]> handler, String... queries)
+    default void requestLinkedDiscord(Consumer<BFLinkedDiscord[]> handler, String... queries)
     {
         this.getExecutor().execute(() -> handler.accept(this.getLinkedDiscord(queries)));
     }
@@ -700,7 +692,7 @@ public interface BattlefieldsApi extends AutoCloseable
      * @param queries The filter to use when searching for data
      * @return The value that will exist at some point in the future
      */
-    default CompletableFuture<Pair<String, Long>[]> requestLinkedDiscord(String... queries)
+    default CompletableFuture<BFLinkedDiscord[]> requestLinkedDiscord(String... queries)
     {
         return CompletableFuture.supplyAsync(() -> this.getLinkedDiscord(queries), this.getExecutor());
     }
@@ -712,7 +704,7 @@ public interface BattlefieldsApi extends AutoCloseable
      * @param queries The filter to use when searching for data
      * @return The weapon information or an empty array if the API request failed
      */
-    Pair<String, Long>[] getLinkedDiscord(String... queries);
+    BFLinkedDiscord[] getLinkedDiscord(String... queries);
 
     /**
      * @return The executor used to make API requests asynchronously

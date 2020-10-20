@@ -1,7 +1,5 @@
 package io.github.tastac.bfj.components;
 
-import java.util.Objects;
-
 /**
  * <p>Information about an emote in-game that has been queried from the Battlefields API.</p>
  *
@@ -56,7 +54,7 @@ public class BFEmote
     @Override
     public int hashCode()
     {
-        return Objects.hash(this.id);
+        return this.id;
     }
 
     @Override

@@ -2,8 +2,6 @@ package io.github.tastac.bfj;
 
 import com.google.gson.*;
 import io.github.tastac.bfj.components.*;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -11,7 +9,6 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
-import javax.annotation.Nullable;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -179,7 +176,6 @@ public class BattlefieldsApiImpl implements BattlefieldsApi
         this.errorCache.clear();
     }
 
-    @Nullable
     @Override
     public JsonArray get(BattlefieldsApiTable table, String... queries)
     {
@@ -195,7 +191,6 @@ public class BattlefieldsApiImpl implements BattlefieldsApi
         }
     }
 
-    @Nullable
     @Override
     public JsonObject getCosmeticModel(String modelName)
     {
@@ -210,7 +205,6 @@ public class BattlefieldsApiImpl implements BattlefieldsApi
         }
     }
 
-    @Nullable
     @Override
     public String getCosmeticModelHash(String modelName)
     {
@@ -225,7 +219,6 @@ public class BattlefieldsApiImpl implements BattlefieldsApi
         }
     }
 
-    @Nullable
     @Override
     public byte[] getCosmeticTexture(String textureName)
     {
@@ -240,7 +233,6 @@ public class BattlefieldsApiImpl implements BattlefieldsApi
         }
     }
 
-    @Nullable
     @Override
     public String getCosmeticTextureHash(String textureName)
     {
@@ -261,62 +253,39 @@ public class BattlefieldsApiImpl implements BattlefieldsApi
         return this.retrieve("server_status", () -> requestDetail(BFJ.BF_SERVER_STATUS_URL).get(0).getAsJsonObject().get(BFJ.BF_SERVER_HOSTNAME).getAsString(), () -> "red");
     }
 
-    @Nullable
     @Override
     public BFServerInfo getServerInfo()
     {
         return this.retrieve("server_info", () -> GSON.fromJson(request(BFJ.BF_SERVER_INFO_URL), BFServerInfo.class), null);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public Pair<String, Integer>[] getKills(String... queries)
+    public BFKill[] getKills(String... queries)
     {
         try
         {
             String query = resolveQueries(queries);
-            return this.retrieve("kills-" + query, () ->
-            {
-                JsonArray jsonArray = requestDetail(getRequestUrl(BattlefieldsApiTable.KILLS, query));
-                Pair<String, Integer>[] kills = new Pair[jsonArray.size()];
-                for (int i = 0; i < jsonArray.size(); i++)
-                {
-                    JsonObject object = jsonArray.get(i).getAsJsonObject();
-                    kills[i] = new ImmutablePair<>(object.get("uuid").getAsString(), object.get("kills").getAsInt());
-                }
-                return kills;
-            }, () -> new Pair[0]);
+            return this.retrieve("kills-" + query, () -> GSON.fromJson(requestDetail(getRequestUrl(BattlefieldsApiTable.KILLS, query)), BFKill[].class), () -> new BFKill[0]);
         }
         catch (Exception e)
         {
             this.exceptionConsumer.accept(e);
-            return new Pair[0];
+            return new BFKill[0];
         }
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public Pair<String, Integer>[] getWins(String... queries)
+    public BFWin[] getWins(String... queries)
     {
         try
         {
             String query = resolveQueries(queries);
-            return this.retrieve("wins-" + query, () ->
-            {
-                JsonArray jsonArray = requestDetail(getRequestUrl(BattlefieldsApiTable.WINS, query));
-                Pair<String, Integer>[] wins = new Pair[jsonArray.size()];
-                for (int i = 0; i < jsonArray.size(); i++)
-                {
-                    JsonObject object = jsonArray.get(i).getAsJsonObject();
-                    wins[i] = new ImmutablePair<>(object.get("uuid").getAsString(), object.get("wins").getAsInt());
-                }
-                return wins;
-            }, () -> new Pair[0]);
+            return this.retrieve("wins-" + query, () -> GSON.fromJson(requestDetail(getRequestUrl(BattlefieldsApiTable.WINS, query)), BFWin[].class), () -> new BFWin[0]);
         }
         catch (Exception e)
         {
             this.exceptionConsumer.accept(e);
-            return new Pair[0];
+            return new BFWin[0];
         }
     }
 
@@ -350,29 +319,18 @@ public class BattlefieldsApiImpl implements BattlefieldsApi
         }
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public Pair<String, Integer>[] getOwnedAccessories(String... queries)
+    public BFOwnedAccessory[] getOwnedAccessories(String... queries)
     {
         try
         {
             String query = resolveQueries(queries);
-            return this.retrieve("owned_accessories-" + query, () ->
-            {
-                JsonArray jsonArray = requestDetail(getRequestUrl(BattlefieldsApiTable.OWNED_ACCESSORIES, query));
-                Pair<String, Integer>[] ownedAccessories = new Pair[jsonArray.size()];
-                for (int i = 0; i < jsonArray.size(); i++)
-                {
-                    JsonObject object = jsonArray.get(i).getAsJsonObject();
-                    ownedAccessories[i] = new ImmutablePair<>(object.get("uuid").getAsString(), object.get("accessory_id").getAsInt());
-                }
-                return ownedAccessories;
-            }, () -> new Pair[0]);
+            return this.retrieve("owned_accessories-" + query, () -> GSON.fromJson(requestDetail(getRequestUrl(BattlefieldsApiTable.OWNED_ACCESSORIES, query)), BFOwnedAccessory[].class), () -> new BFOwnedAccessory[0]);
         }
         catch (Exception e)
         {
             this.exceptionConsumer.accept(e);
-            return new Pair[0];
+            return new BFOwnedAccessory[0];
         }
     }
 
@@ -391,29 +349,18 @@ public class BattlefieldsApiImpl implements BattlefieldsApi
         }
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public Pair<Integer, String>[] getAccessoryTypes(String... queries)
+    public BFAccessoryType[] getAccessoryTypes(String... queries)
     {
         try
         {
             String query = resolveQueries(queries);
-            return this.retrieve("accessory_types-" + query, () ->
-            {
-                JsonArray jsonArray = requestDetail(getRequestUrl(BattlefieldsApiTable.ACCESSORY_TYPES, query));
-                Pair<Integer, String>[] accessoryTypes = new Pair[jsonArray.size()];
-                for (int i = 0; i < jsonArray.size(); i++)
-                {
-                    JsonObject object = jsonArray.get(i).getAsJsonObject();
-                    accessoryTypes[i] = new ImmutablePair<>(object.get("id").getAsInt(), object.get("name").getAsString());
-                }
-                return accessoryTypes;
-            }, () -> new Pair[0]);
+            return this.retrieve("accessory_types-" + query, () -> GSON.fromJson(requestDetail(getRequestUrl(BattlefieldsApiTable.ACCESSORY_TYPES, query)), BFAccessoryType[].class), () -> new BFAccessoryType[0]);
         }
         catch (Exception e)
         {
             this.exceptionConsumer.accept(e);
-            return new Pair[0];
+            return new BFAccessoryType[0];
         }
     }
 
@@ -447,70 +394,48 @@ public class BattlefieldsApiImpl implements BattlefieldsApi
         }
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public Pair<Integer, Integer>[] getMatchParticipants(String... queries)
+    public BFMatchParticipant[] getMatchParticipants(String... queries)
     {
         try
         {
             String query = resolveQueries(queries);
-            return this.retrieve("match_participants-" + query, () ->
-            {
-                JsonArray jsonArray = requestDetail(getRequestUrl(BattlefieldsApiTable.MATCH_PARTICIPANTS, query));
-                Pair<Integer, Integer>[] matchParticipants = new Pair[jsonArray.size()];
-                for (int i = 0; i < jsonArray.size(); i++)
-                {
-                    JsonObject object = jsonArray.get(i).getAsJsonObject();
-                    matchParticipants[i] = new ImmutablePair<>(object.get("match_id").getAsInt(), object.get("player_id").getAsInt());
-                }
-                return matchParticipants;
-            }, () -> new Pair[0]);
+            return this.retrieve("match_participants-" + query, () -> GSON.fromJson(requestDetail(getRequestUrl(BattlefieldsApiTable.MATCH_PARTICIPANTS, query)), BFMatchParticipant[].class), () -> new BFMatchParticipant[0]);
         }
         catch (Exception e)
         {
             this.exceptionConsumer.accept(e);
-            return new Pair[0];
+            return new BFMatchParticipant[0];
         }
     }
 
     @Override
-    public BFKill[] getMatchKills(String... queries)
+    public BFKillInfo[] getMatchKills(String... queries)
     {
         try
         {
             String query = resolveQueries(queries);
-            return this.retrieve("match_kills-" + query, () -> GSON.fromJson(requestDetail(getRequestUrl(BattlefieldsApiTable.MATCH_KILLS, query)), BFKill[].class), () -> new BFKill[0]);
+            return this.retrieve("match_kills-" + query, () -> GSON.fromJson(requestDetail(getRequestUrl(BattlefieldsApiTable.MATCH_KILLS, query)), BFKillInfo[].class), () -> new BFKillInfo[0]);
         }
         catch (Exception e)
         {
             this.exceptionConsumer.accept(e);
-            return new BFKill[0];
+            return new BFKillInfo[0];
         }
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public Pair<String, Integer>[] getOwnedEmotes(String... queries)
+    public BFOwnedEmote[] getOwnedEmotes(String... queries)
     {
         try
         {
             String query = resolveQueries(queries);
-            return this.retrieve("owned_emotes-" + query, () ->
-            {
-                JsonArray jsonArray = requestDetail(getRequestUrl(BattlefieldsApiTable.OWNED_EMOTES, query));
-                Pair<String, Integer>[] ownedEmotes = new Pair[jsonArray.size()];
-                for (int i = 0; i < jsonArray.size(); i++)
-                {
-                    JsonObject object = jsonArray.get(i).getAsJsonObject();
-                    ownedEmotes[i] = new ImmutablePair<>(object.get("uuid").getAsString(), object.get("emote_id").getAsInt());
-                }
-                return ownedEmotes;
-            }, () -> new Pair[0]);
+            return this.retrieve("owned_emotes-" + query, () -> GSON.fromJson(requestDetail(getRequestUrl(BattlefieldsApiTable.OWNED_EMOTES, query)), BFOwnedEmote[].class), () -> new BFOwnedEmote[0]);
         }
         catch (Exception e)
         {
             this.exceptionConsumer.accept(e);
-            return new Pair[0];
+            return new BFOwnedEmote[0];
         }
     }
 
@@ -529,29 +454,18 @@ public class BattlefieldsApiImpl implements BattlefieldsApi
         }
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public Pair<String, Long>[] getLinkedDiscord(String... queries)
+    public BFLinkedDiscord[] getLinkedDiscord(String... queries)
     {
         try
         {
             String query = resolveQueries(queries);
-            return this.retrieve("linked_discords-" + query, () ->
-            {
-                JsonArray jsonArray = requestDetail(getRequestUrl(BattlefieldsApiTable.LINKED_DISCORD, query));
-                Pair<String, Long>[] linkedDiscords = new Pair[jsonArray.size()];
-                for (int i = 0; i < jsonArray.size(); i++)
-                {
-                    JsonObject object = jsonArray.get(i).getAsJsonObject();
-                    linkedDiscords[i] = new ImmutablePair<>(object.get("uuid").getAsString(), object.get("discord_id").getAsLong());
-                }
-                return linkedDiscords;
-            }, () -> new Pair[0]);
+            return this.retrieve("linked_discord-" + query, () -> GSON.fromJson(requestDetail(getRequestUrl(BattlefieldsApiTable.LINKED_DISCORD, query)), BFLinkedDiscord[].class), () -> new BFLinkedDiscord[0]);
         }
         catch (Exception e)
         {
             this.exceptionConsumer.accept(e);
-            return new Pair[0];
+            return new BFLinkedDiscord[0];
         }
     }
 

@@ -1,7 +1,6 @@
 import io.github.tastac.bfj.BattlefieldsApi;
 import io.github.tastac.bfj.BattlefieldsApiBuilder;
 import io.github.tastac.bfj.components.*;
-import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
@@ -26,9 +25,9 @@ public class ApiTest
     {
         CompletableFuture<BFWeapon[]> weaponsFuture = api.requestWeapons();
         CompletableFuture<BFAccessory[]> accessoriesFuture = api.requestAccessories();
-        CompletableFuture<Pair<Integer, String>[]> accessoryTypesFuture = api.requestAccessoryTypes();
-        CompletableFuture<Pair<String, Long>[]> linkedDiscordFuture = api.requestLinkedDiscord();
-        CompletableFuture<Pair<String, Integer>[]> ownedEmotesFuture = api.requestOwnedEmotes();
+        CompletableFuture<BFAccessoryType[]> accessoryTypesFuture = api.requestAccessoryTypes();
+        CompletableFuture<BFLinkedDiscord[]> linkedDiscordFuture = api.requestLinkedDiscord();
+        CompletableFuture<BFOwnedEmote[]> ownedEmotesFuture = api.requestOwnedEmotes();
         CompletableFuture<BFEmote[]> emotesFuture = api.requestEmotes();
         CompletableFuture<BFWeaponStats[]> weaponStatsFuture = api.requestWeaponStats("match_id=19");
         CompletableFuture<String> serverStatusFuture = api.requestServerStatus();

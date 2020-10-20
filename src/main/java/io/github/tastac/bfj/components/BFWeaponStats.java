@@ -2,8 +2,6 @@ package io.github.tastac.bfj.components;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.util.Objects;
-
 /**
  * <p>Information about firing a gun in-game that has been queried from the Battlefields API.</p>
  *
@@ -101,7 +99,7 @@ public class BFWeaponStats
     @Override
     public int hashCode()
     {
-        return Objects.hash(this.id);
+        return this.id;
     }
 
     @Override

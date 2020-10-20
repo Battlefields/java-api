@@ -1,7 +1,5 @@
 package io.github.tastac.bfj.components;
 
-import java.util.Objects;
-
 /**
  * <p>Information about a match in-game that has been queried from the Battlefields API.</p>
  *
@@ -27,22 +25,34 @@ public class BFMatch
     /**
      * @return The id of this specific match
      */
-    public int getId() { return id; }
+    public int getId()
+    {
+        return id;
+    }
 
     /**
      * @return The number of this match
      */
-    public int getNumber() { return number; }
+    public int getNumber()
+    {
+        return number;
+    }
 
     /**
      * @return The starting date of this match
      */
-    public String getStartDate() { return startDate; }
+    public String getStartDate()
+    {
+        return startDate;
+    }
 
     /**
      * @return The ending date of this match
      */
-    public String getEndDate() { return endDate; }
+    public String getEndDate()
+    {
+        return endDate;
+    }
 
     /**
      * @return The id of the player that won
@@ -64,7 +74,7 @@ public class BFMatch
     @Override
     public int hashCode()
     {
-        return Objects.hash(this.id);
+        return this.id;
     }
 
     @Override

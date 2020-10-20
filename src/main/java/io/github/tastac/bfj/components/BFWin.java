@@ -3,23 +3,23 @@ package io.github.tastac.bfj.components;
 import java.util.Objects;
 
 /**
- * <p>A count of kills for a player that has been queried from the Battlefields API.</p>
+ * <p>A count of wins for a player that has been queried from the Battlefields API.</p>
  *
  * @author Ocelot
  */
-public class BFKill
+public class BFWin
 {
     private final String uuid;
-    private final int kills;
+    private final int wins;
 
-    public BFKill(String uuid, int kills)
+    public BFWin(String uuid, int wins)
     {
         this.uuid = uuid;
-        this.kills = kills;
+        this.wins = wins;
     }
 
     /**
-     * @return The id of the player with the kills
+     * @return The id of the player with the wins
      */
     public String getUuid()
     {
@@ -27,11 +27,11 @@ public class BFKill
     }
 
     /**
-     * @return The count of kills the player has
+     * @return The count of wins the player has
      */
-    public int getKills()
+    public int getWins()
     {
-        return kills;
+        return wins;
     }
 
     @Override
@@ -39,23 +39,23 @@ public class BFKill
     {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        BFKill bfKill = (BFKill) o;
-        return this.kills == bfKill.kills &&
+        BFWin bfKill = (BFWin) o;
+        return this.wins == bfKill.wins &&
                 this.uuid.equals(bfKill.uuid);
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash(this.uuid, this.kills);
+        return Objects.hash(this.uuid, this.wins);
     }
 
     @Override
     public String toString()
     {
-        return "BFKill{" +
+        return "BFWin{" +
                 "uuid='" + this.uuid + '\'' +
-                ", kills=" + this.kills +
+                ", wins=" + this.wins +
                 '}';
     }
 }

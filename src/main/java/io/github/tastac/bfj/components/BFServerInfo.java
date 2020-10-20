@@ -2,7 +2,6 @@ package io.github.tastac.bfj.components;
 
 import com.google.gson.*;
 
-import javax.annotation.Nullable;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,7 +27,7 @@ public class BFServerInfo
     private final String hostname;
     private final String icon;
 
-    private BFServerInfo(String ip, int port, String motd, int onlinePlayers, int maxPlayers, String[] onlinePlayerNames, String version, boolean online, int protocol, String hostname, @Nullable String icon)
+    private BFServerInfo(String ip, int port, String motd, int onlinePlayers, int maxPlayers, String[] onlinePlayerNames, String version, boolean online, int protocol, String hostname, String icon)
     {
         this.ip = ip;
         this.port = port;
@@ -124,9 +123,8 @@ public class BFServerInfo
     }
 
     /**
-     * @return The icon image data for the server
+     * @return The icon image data for the server or <code>null</code> if there is no icon
      */
-    @Nullable
     public String getIcon()
     {
         return icon;
