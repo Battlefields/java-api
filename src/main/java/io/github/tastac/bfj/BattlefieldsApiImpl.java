@@ -208,13 +208,17 @@ public class BattlefieldsApiImpl implements BattlefieldsApi
     @Override
     public String getCosmeticModelHash(String modelName)
     {
+        if (this.isCacheValid("cosmetic_model_hash-" + modelName))
+            return null;
         try
         {
-            return this.retrieve("cosmetic_model_hash-" + modelName, () -> new String(requestRaw(BFJ.BF_COSMETIC_URL + "model/" + modelName + ".json.md5")), () -> null);
+            return new String(requestRaw(BFJ.BF_COSMETIC_URL + "model/" + modelName + ".json.md5"));
         }
         catch (Exception e)
         {
             this.exceptionConsumer.accept(e);
+            if (this.cacheTime > 0 && this.cacheErrors)
+                this.errorCache.put("cosmetic_model_hash-" + modelName, System.currentTimeMillis());
             return null;
         }
     }
@@ -236,13 +240,17 @@ public class BattlefieldsApiImpl implements BattlefieldsApi
     @Override
     public String getCosmeticTextureHash(String textureName)
     {
+        if (this.isCacheValid("cosmetic_texture_hash-" + textureName))
+            return null;
         try
         {
-            return this.retrieve("cosmetic_texture_hash-" + textureName, () -> new String(requestRaw(BFJ.BF_COSMETIC_URL + "texture/" + textureName + ".png.md5")), () -> null);
+            return new String(requestRaw(BFJ.BF_COSMETIC_URL + "texture/" + textureName + ".png.md5"));
         }
         catch (Exception e)
         {
             this.exceptionConsumer.accept(e);
+            if (this.cacheTime > 0 && this.cacheErrors)
+                this.errorCache.put("cosmetic_texture_hash-" + textureName, System.currentTimeMillis());
             return null;
         }
     }
