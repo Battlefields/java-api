@@ -9,13 +9,13 @@ public class BFEmote
 {
     private final int id;
     private final String name;
-    private final boolean enabled;
+    private final String enabled;
 
     public BFEmote(int id, String name, boolean enabled)
     {
         this.id = id;
         this.name = name;
-        this.enabled = enabled;
+        this.enabled = enabled ? "1" : "0";
     }
 
     /**
@@ -39,7 +39,7 @@ public class BFEmote
      */
     public boolean isEnabled()
     {
-        return enabled;
+        return "1".equals(this.enabled);
     }
 
     @Override
@@ -63,7 +63,7 @@ public class BFEmote
         return "BFEmote{" +
                 "id=" + this.id +
                 ", name='" + this.name + '\'' +
-                ", enabled=" + this.enabled +
+                ", enabled=" + this.isEnabled() +
                 '}';
     }
 }

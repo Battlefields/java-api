@@ -17,8 +17,8 @@ public class BFAccessory
     private final int typeId;
     private final String name;
     private final String data;
-    private final boolean enabled;
-    private final boolean hidden;
+    private final String enabled;
+    private final String hidden;
 
     public BFAccessory(int id, int typeId, String name, String data, boolean enabled, boolean hidden)
     {
@@ -26,8 +26,8 @@ public class BFAccessory
         this.typeId = typeId;
         this.name = name;
         this.data = data;
-        this.enabled = enabled;
-        this.hidden = hidden;
+        this.enabled = enabled ? "1" : "0";
+        this.hidden = hidden ? "1" : "0";
     }
 
     /**
@@ -67,7 +67,7 @@ public class BFAccessory
      */
     public boolean isEnabled()
     {
-        return enabled;
+        return "1".equals(this.enabled);
     }
 
     /**
@@ -75,7 +75,7 @@ public class BFAccessory
      */
     public boolean isHidden()
     {
-        return hidden;
+        return "1".equals(this.hidden);
     }
 
     /**
@@ -109,8 +109,8 @@ public class BFAccessory
                 ", accessory_type=" + this.typeId +
                 ", name='" + this.name + '\'' +
                 ", data='" + this.data + '\'' +
-                ", enabled=" + this.enabled +
-                ", hidden=" + this.hidden +
+                ", enabled=" + this.isEnabled() +
+                ", hidden=" + this.isHidden() +
                 '}';
     }
 }
