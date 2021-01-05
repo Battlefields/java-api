@@ -2,14 +2,14 @@ package io.github.tastac.bfj;
 
 import com.google.gson.*;
 import io.github.tastac.bfj.components.*;
-import org.apache.http.StatusLine;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
@@ -54,37 +54,49 @@ public class BattlefieldsApiImpl implements BattlefieldsApi
         this.errorCache = new ConcurrentHashMap<>();
     }
 
-    private static byte[] requestRaw(String url) throws IOException
+    private static byte[] requestRaw(String url) throws URISyntaxException, IOException
     {
-        try (CloseableHttpClient client = HttpClients.custom().setUserAgent(USER_AGENT).build())
+        HttpURLConnection connection = (HttpURLConnection) new URI(url).toURL().openConnection();
+        connection.addRequestProperty("User-Agent", USER_AGENT);
+        try (InputStream stream = connection.getInputStream())
         {
-            HttpGet get = new HttpGet(url);
-            try (CloseableHttpResponse response = client.execute(get))
+            if (connection.getResponseCode() != 200)
+                throw new IOException("Failed to connect to '" + url + "'. " + connection.getResponseCode() + " " + connection.getResponseMessage());
+
+            ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+            int count;
+            byte[] data = new byte[4096];
+            while ((count = stream.read(data, 0, data.length)) != -1)
             {
-                StatusLine statusLine = response.getStatusLine();
-                if (statusLine.getStatusCode() != 200)
-                    throw new IOException("Failed to connect to '" + url + "'. " + statusLine.getStatusCode() + " " + statusLine.getReasonPhrase());
-                return EntityUtils.toByteArray(response.getEntity());
+                buffer.write(data, 0, count);
             }
+            return buffer.toByteArray();
+        }
+        finally
+        {
+            if (connection.getResponseCode() != 200 && connection.getErrorStream() != null)
+                connection.getErrorStream().close();
         }
     }
 
-    private static JsonElement request(String url) throws IOException
+    private static JsonElement request(String url) throws URISyntaxException, IOException
     {
-        try (CloseableHttpClient client = HttpClients.custom().setUserAgent(USER_AGENT).build())
+        HttpURLConnection connection = (HttpURLConnection) new URI(url).toURL().openConnection();
+        connection.addRequestProperty("User-Agent", USER_AGENT);
+        try (InputStream stream = connection.getInputStream())
         {
-            HttpGet get = new HttpGet(url);
-            try (CloseableHttpResponse response = client.execute(get))
-            {
-                StatusLine statusLine = response.getStatusLine();
-                if (statusLine.getStatusCode() != 200)
-                    throw new IOException("Failed to connect to '" + url + "'. " + statusLine.getStatusCode() + " " + statusLine.getReasonPhrase());
-                return new JsonParser().parse(EntityUtils.toString(response.getEntity()));
-            }
+            if (connection.getResponseCode() != 200)
+                throw new IOException("Failed to connect to '" + url + "'. " + connection.getResponseCode() + " " + connection.getResponseMessage());
+            return new JsonParser().parse(new InputStreamReader(stream));
+        }
+        finally
+        {
+            if (connection.getResponseCode() != 200 && connection.getErrorStream() != null)
+                connection.getErrorStream().close();
         }
     }
 
-    private static JsonArray requestDetail(String url) throws IOException, JsonParseException
+    private static JsonArray requestDetail(String url) throws URISyntaxException, IOException, JsonParseException
     {
         JsonObject requestObject = request(url).getAsJsonObject();
         if (!requestObject.get("status").getAsBoolean())
@@ -500,8 +512,8 @@ public class BattlefieldsApiImpl implements BattlefieldsApi
     {
         /**
          * @return The data read
-         * @throws IOException If the data could not be read for any reason
+         * @throws Exception If the data could not be read for any reason
          */
-        T fetch() throws IOException;
+        T fetch() throws Exception;
     }
 }
