@@ -276,7 +276,7 @@ public class BattlefieldsApiImpl implements BattlefieldsApi
     @Override
     public BFServerInfo getServerInfo()
     {
-        return this.retrieve("server_info", () -> GSON.fromJson(request(BFJ.BF_SERVER_INFO_URL), BFServerInfo.class), null);
+        return this.retrieve("server_info", () -> GSON.fromJson(request(BFJ.BF_SERVER_INFO_URL), BFServerInfo.class), () -> null);
     }
 
     @Override
