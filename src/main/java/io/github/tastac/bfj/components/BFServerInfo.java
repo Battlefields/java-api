@@ -173,18 +173,19 @@ public class BFServerInfo
             int port = jsonObject.get("port").getAsInt();
 
             StringBuilder motd = new StringBuilder();
-            jsonObject.get("motd").getAsJsonObject().get("raw").getAsJsonArray().forEach(jsonElement -> motd.append(jsonElement.getAsString()).append('\n'));
+            if (jsonObject.has("motd"))
+                jsonObject.get("motd").getAsJsonObject().get("raw").getAsJsonArray().forEach(jsonElement -> motd.append(jsonElement.getAsString()).append('\n'));
 
-            JsonObject playersJson = jsonObject.get("players").getAsJsonObject();
-            int onlinePlayers = playersJson.get("online").getAsInt();
-            int maxPlayers = playersJson.get("max").getAsInt();
+            JsonObject playersJson = jsonObject.has("players") ? jsonObject.get("players").getAsJsonObject() : null;
+            int onlinePlayers = playersJson != null ? playersJson.get("online").getAsInt() : 0;
+            int maxPlayers = playersJson != null ? playersJson.get("max").getAsInt() : 0;
             List<String> onlinePlayerNames = new ArrayList<>();
-            if (playersJson.has("list"))
+            if (playersJson != null && playersJson.has("list"))
                 playersJson.get("list").getAsJsonArray().forEach(jsonElement -> onlinePlayerNames.add(jsonElement.getAsString()));
 
-            String version = jsonObject.get("version").getAsString();
             boolean online = jsonObject.get("online").getAsBoolean();
-            int protocol = jsonObject.get("protocol").getAsInt();
+            String version = online ? jsonObject.get("version").getAsString() : null;
+            int protocol = online ? jsonObject.get("protocol").getAsInt() : 0;
             String hostname = jsonObject.get("hostname").getAsString();
             String icon = jsonObject.has("icon") ? jsonObject.get("icon").getAsString() : null;
             return new BFServerInfo(ip, port, motd.toString(), onlinePlayers, maxPlayers, onlinePlayerNames.toArray(new String[0]), version, online, protocol, hostname, icon);
