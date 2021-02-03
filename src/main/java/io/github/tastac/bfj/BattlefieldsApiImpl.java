@@ -13,6 +13,7 @@ import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -204,11 +205,11 @@ public class BattlefieldsApiImpl implements BattlefieldsApi
     }
 
     @Override
-    public JsonObject getCosmeticModel(String modelName)
+    public String[] getServerList()
     {
         try
         {
-            return this.retrieve("cosmetic_model-" + modelName, () -> new JsonParser().parse(new String(requestRaw(BFJ.BF_COSMETIC_URL + "model/" + modelName + ".json"))).getAsJsonObject(), () -> null);
+            return this.retrieve("server_list", () -> GSON.fromJson(request(BFJ.BF_SERVER_LIST_URL), String[].class), () -> new String[0]);
         }
         catch (Exception e)
         {
@@ -218,29 +219,25 @@ public class BattlefieldsApiImpl implements BattlefieldsApi
     }
 
     @Override
-    public String getCosmeticModelHash(String modelName)
-    {
-        if (this.isCacheValid("cosmetic_model_hash-" + modelName))
-            return null;
-        try
-        {
-            return new String(requestRaw(BFJ.BF_COSMETIC_URL + "model/" + modelName + ".json.md5"));
-        }
-        catch (Exception e)
-        {
-            this.exceptionConsumer.accept(e);
-            if (this.cacheTime > 0 && this.cacheErrors)
-                this.errorCache.put("cosmetic_model_hash-" + modelName, System.currentTimeMillis());
-            return null;
-        }
-    }
-
-    @Override
-    public byte[] getCosmeticTexture(String textureName)
+    public BFServer[] getServerStatus()
     {
         try
         {
-            return this.retrieve("cosmetic_texture-" + textureName, () -> requestRaw(BFJ.BF_COSMETIC_URL + "texture/" + textureName + ".png"), () -> null);
+            return this.retrieve("server_status", () ->
+            {
+                JsonArray jsonArray = requestDetail(BFJ.BF_SERVER_STATUS_URL);
+                BFServer[] servers = new BFServer[jsonArray.size()];
+                for (int i = 0; i < servers.length; i++)
+                {
+                    JsonObject jsonObject = jsonArray.get(i).getAsJsonObject();
+                    Set<Map.Entry<String, JsonElement>> entries = jsonObject.entrySet();
+                    if (entries.size() != 1)
+                        throw new IllegalArgumentException("Expected a single entry: " + jsonObject);
+                    Map.Entry<String, JsonElement> entry = entries.iterator().next();
+                    servers[i] = new BFServer(entry.getKey(), entry.getValue().getAsString());
+                }
+                return servers;
+            }, () -> new BFServer[0]);
         }
         catch (Exception e)
         {
@@ -249,34 +246,88 @@ public class BattlefieldsApiImpl implements BattlefieldsApi
         }
     }
 
+//    @Override
+//    public JsonObject getCosmeticModel(String modelName)
+//    {
+//        try
+//        {
+//            return this.retrieve("cosmetic_model-" + modelName, () -> new JsonParser().parse(new String(requestRaw(BFJ.BF_COSMETIC_URL + "model/" + modelName + ".json"))).getAsJsonObject(), () -> null);
+//        }
+//        catch (Exception e)
+//        {
+//            this.exceptionConsumer.accept(e);
+//            return null;
+//        }
+//    }
+//
+//    @Override
+//    public String getCosmeticModelHash(String modelName)
+//    {
+//        if (this.isCacheValid("cosmetic_model_hash-" + modelName))
+//            return null;
+//        try
+//        {
+//            return new String(requestRaw(BFJ.BF_COSMETIC_URL + "model/" + modelName + ".json.md5"));
+//        }
+//        catch (Exception e)
+//        {
+//            this.exceptionConsumer.accept(e);
+//            if (this.cacheTime > 0 && this.cacheErrors)
+//                this.errorCache.put("cosmetic_model_hash-" + modelName, System.currentTimeMillis());
+//            return null;
+//        }
+//    }
+//
+//    @Override
+//    public byte[] getCosmeticTexture(String textureName)
+//    {
+//        try
+//        {
+//            return this.retrieve("cosmetic_texture-" + textureName, () -> requestRaw(BFJ.BF_COSMETIC_URL + "texture/" + textureName + ".png"), () -> null);
+//        }
+//        catch (Exception e)
+//        {
+//            this.exceptionConsumer.accept(e);
+//            return null;
+//        }
+//    }
+//
+//    @Override
+//    public String getCosmeticTextureHash(String textureName)
+//    {
+//        if (this.isCacheValid("cosmetic_texture_hash-" + textureName))
+//            return null;
+//        try
+//        {
+//            return new String(requestRaw(BFJ.BF_COSMETIC_URL + "texture/" + textureName + ".png.md5"));
+//        }
+//        catch (Exception e)
+//        {
+//            this.exceptionConsumer.accept(e);
+//            if (this.cacheTime > 0 && this.cacheErrors)
+//                this.errorCache.put("cosmetic_texture_hash-" + textureName, System.currentTimeMillis());
+//            return null;
+//        }
+//    }
+
+//    @Override
+//    public String getServerStatus()
+//    {
+//        return this.retrieve("server_status", () -> requestDetail(BFJ.BF_SERVER_STATUS_URL).get(0).getAsJsonObject().get(BFJ.BF_SERVER_HOSTNAME).getAsString(), () -> "red");
+//    }
+
     @Override
-    public String getCosmeticTextureHash(String textureName)
+    public BFServerInfo getServerInfo(String ip)
     {
-        if (this.isCacheValid("cosmetic_texture_hash-" + textureName))
-            return null;
         try
         {
-            return new String(requestRaw(BFJ.BF_COSMETIC_URL + "texture/" + textureName + ".png.md5"));
+            return this.retrieve("server_info-" + ip, () -> GSON.fromJson(request(BFJ.BF_SERVER_INFO_URL + ip), BFServerInfo.class), () -> null);
         }
         catch (Exception e)
         {
             this.exceptionConsumer.accept(e);
-            if (this.cacheTime > 0 && this.cacheErrors)
-                this.errorCache.put("cosmetic_texture_hash-" + textureName, System.currentTimeMillis());
             return null;
         }
-    }
-
-    @Override
-    public String getServerStatus()
-    {
-        return this.retrieve("server_status", () -> requestDetail(BFJ.BF_SERVER_STATUS_URL).get(0).getAsJsonObject().get(BFJ.BF_SERVER_HOSTNAME).getAsString(), () -> "red");
-    }
-
-    @Override
-    public BFServerInfo getServerInfo()
-    {
-        return this.retrieve("server_info", () -> GSON.fromJson(request(BFJ.BF_SERVER_INFO_URL), BFServerInfo.class), () -> null);
     }
 
     @Override
